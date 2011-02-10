@@ -11,26 +11,24 @@
 #include <glm/core/type.hpp>
 #include <ostream>
 
-namespace glm {
-	template<typename U>
-	std::ostream &operator<<(std::ostream &ostr, const detail::tvec1<U> &v) {
-		return ostr << "(" << v.x << ")";
-	}
+template<typename U>
+std::ostream &operator<<(std::ostream &ostr, const glm::detail::tvec1<U> &v) {
+	return ostr << "(" << v.x << ")";
+}
 
-	template<typename U>
-	std::ostream &operator<<(std::ostream &ostr, const detail::tvec2<U> &v) {
-		return ostr << "(" << v.x << "," << v.y << ")";
-	}
+template<typename U>
+std::ostream &operator<<(std::ostream &ostr, const glm::detail::tvec2<U> &v) {
+	return ostr << "(" << v.x << "," << v.y << ")";
+}
 
-	template<typename U>
-	std::ostream &operator<<(std::ostream &ostr, const detail::tvec3<U> &v) {
-		return ostr << "(" << v.x << "," << v.y << "," << v.z << ")";
-	}
+template<typename U>
+std::ostream &operator<<(std::ostream &ostr, const glm::detail::tvec3<U> &v) {
+	return ostr << "(" << v.x << "," << v.y << "," << v.z << ")";
+}
 
-	template<typename U>
-	std::ostream &operator<<(std::ostream &ostr, const detail::tvec4<U> &v) {
-		return ostr << "(" << v.x << "," << v.y << "," << v.z << "," << v.w <<")";
-	}
+template<typename U>
+std::ostream &operator<<(std::ostream &ostr, const glm::detail::tvec4<U> &v) {
+	return ostr << "(" << v.x << "," << v.y << "," << v.z << "," << v.w <<")";
 }
 
 

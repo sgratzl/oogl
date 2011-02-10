@@ -6,6 +6,7 @@
  */
 
 #include <oogl/glIncludes.h>
+#include <GL/glu.h>
 #include <utils/log.h>
 
 #define LOG_GL_ERRORS() \

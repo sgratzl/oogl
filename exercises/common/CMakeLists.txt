@@ -11,7 +11,7 @@ find_package(OpenGL)
 use_package(OpenGL)
 find_binary_dirs(OpenGL)
 
-find_package(GLM)
+find_package(GLM REQUIRED)
 use_package(GLM)
 
 find_internal_package(GLee)
