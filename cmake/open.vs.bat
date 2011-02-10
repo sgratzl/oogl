@@ -1,0 +1,2 @@
+@set PATH=%PATH%;@PROJECT_BIN_DIRS@
+@start @PROJECT_NAME@.sln
