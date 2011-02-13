@@ -20,6 +20,12 @@ include(cmake/setup.cmake)
 includeUserSettings()
 
 add_subdirectory(external)
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/internal/CMakeLists.txt")
+	set(INTERNAL_AVALIABLE TRUE)
+	add_subdirectory(internal)
+endif()
+
 add_subdirectory(exercises)
 
 include(cmake/takedown.cmake)

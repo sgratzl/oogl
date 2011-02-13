@@ -1,3 +1,3 @@
 add_subdirectory(common)
 
-add_subdirectory(ex1Introduction)
+add_subdirectories(EXCLUDES common exXNameWithoutSpaces)
