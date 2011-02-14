@@ -14,13 +14,10 @@
 #define LOG_LEVEL LOG_LEVEL_DEBUG
 
 #include <oogl/GLSLShader.h>
+#include <oogl/GLSLProgram.h>
 
 #include <oogl/gl_error.h>
 #include <oogl/timer.h>
-
-void init() {
-
-}
 
 int setupGLUT(int argc, char** argv) {
 	glutInit(&argc, argv);
@@ -43,16 +40,44 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	std::string shader = std::string(argv[1]);
-
-	try {
-		oogl::GLSLShader *s = new oogl::GLSLShader(oogl::GLSLShader::FRAGMENT, shader);
-		delete s;
-		LOG_INFO << "success" << std::endl;
-	} catch (std::exception e) {
-		LOG_ERROR << "error occurred: " << e.what() << std::endl;
-		return 1;
+	switch(argc) {
+	case 2: {
+		std::string fragShader = std::string(argv[1]);
+		try {
+			oogl::GLSLShader *s = new oogl::GLSLShader(oogl::GLSLShader::FRAGMENT, fragShader);
+			delete s;
+			LOG_INFO << fragShader << ": success" << std::endl;
+		} catch (std::exception e) {
+			LOG_ERROR << fragShader << ": error occurred: " << e.what() << std::endl;
+			return 1;
+		}
+		break;
 	}
-
+	case 3: {
+		std::string vertShader = std::string(argv[1]);
+		std::string fragShader = std::string(argv[2]);
+		try {
+			oogl::GLSLProgramPtr p = oogl::GLSLProgram::create(vertShader, fragShader);
+			LOG_INFO << "program(" << vertShader <<", " << fragShader << ")" << ": success" << std::endl;
+		} catch (std::exception e) {
+			LOG_ERROR << "program(" << vertShader <<", " << fragShader << ")" << ": error occurred: " << e.what() << std::endl;
+			return 1;
+		}
+		break;
+	}
+	default: {
+		std::string vertShader = std::string(argv[1]);
+		std::string geomShader = std::string(argv[2]);
+		std::string fragShader = std::string(argv[3]);
+		try {
+			oogl::GLSLProgramPtr p = oogl::GLSLProgram::create(vertShader, geomShader, fragShader);
+			LOG_INFO << "program(" << vertShader <<", " << geomShader <<", " << fragShader << ")" << ": success" << std::endl;
+		} catch (std::exception e) {
+			LOG_ERROR << "program(" << vertShader <<", " << geomShader <<", " << fragShader << ")" << ": error occurred: " << e.what() << std::endl;
+			return 1;
+		}
+		break;
+	}
+	}
 	return 0;
 }

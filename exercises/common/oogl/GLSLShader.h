@@ -25,7 +25,11 @@ public:
 	GLSLShader(const ShaderType shaderType, const std::string& filename);
 	virtual ~GLSLShader();
 
+	const char *toString(const ShaderType type) const;
+
 private:
+	ShaderType type;
+	std::string filename;
 	GLuint shader;
 	friend class GLSLProgram;
 
