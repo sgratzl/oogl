@@ -1,9 +1,5 @@
-/*
- * GLSLShader.h
- *
- *  Created on: 12.07.2010
- *      Author: sam
- */
+#ifndef GL_ERROR_H
+#define GL_ERROR_H
 
 #include <oogl/glIncludes.h>
 #include <GL/glu.h>
@@ -18,14 +14,7 @@
 
 
 namespace oogl {
-	void dumpGLInfos() {
-		if(!LOG_IS_INFO_ENABLED)
-			return;
-
-		LOG_INFO << std::endl
-			<< "Vendor: " << glGetString(GL_VENDOR) << std::endl
-			<< "Renderer: " << glGetString(GL_RENDERER) << std::endl
-			<< "Version: " << glGetString(GL_VERSION) << std::endl
-			<< "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-	}
+	void dumpGLInfos();
 }
+
+#endif

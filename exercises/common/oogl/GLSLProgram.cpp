@@ -115,6 +115,8 @@ GLSLAttrib& GLSLProgram::operator[](const std::string& arg) {
 
 GLSLAttrib::GLSLAttrib(const GLint id): id(id) {}
 
+//TODO support vec, matrices and boolean
+
 GLSLAttrib& GLSLAttrib::operator=(const int value) {
 	if(id >= 0) {
 		glUniform1i(id, value);
@@ -135,7 +137,9 @@ GLSLAttrib& GLSLAttrib::operator=(const float value) {
 	return *this;
 }
 GLSLAttrib& GLSLAttrib::operator=(Texture* value) {
+
 	if(id >= 0) {
+		//TODO wrong must be the binded texture num
 		glUniform1i(id, value->textureId);
 		LOG_GL_ERRORS();
 	} else {
