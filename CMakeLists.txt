@@ -23,6 +23,7 @@ add_subdirectory(external)
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/internal/CMakeLists.txt")
 	set(INTERNAL_AVALIABLE TRUE)
+	set(INTERNAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/internal")
 	add_subdirectory(internal)
 	include_directories(internal/snipplets)
 endif()
