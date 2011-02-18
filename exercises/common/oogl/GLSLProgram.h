@@ -9,10 +9,12 @@
 #define GLSLPROGRAM_H_
 
 #include <oogl/glIncludes.h>
-
-#include <utils/log.h>
 #include <oogl/GLSLShader.h>
 #include <oogl/Texture.h>
+
+#include <utils/log.h>
+
+#include <glm/glm.hpp>
 
 #include <vector>
 #include <map>
@@ -26,7 +28,29 @@ public:
 	GLSLAttrib(const GLint id);
 
 	GLSLAttrib& operator=(const int value);
+	GLSLAttrib& operator=(const glm::ivec2 value);
+	GLSLAttrib& operator=(const glm::ivec3 value);
+	GLSLAttrib& operator=(const glm::ivec4 value);
+
+	GLSLAttrib& operator=(const glm::uint value);
+	GLSLAttrib& operator=(const glm::uvec2 value);
+	GLSLAttrib& operator=(const glm::uvec3 value);
+	GLSLAttrib& operator=(const glm::uvec4 value);
+
 	GLSLAttrib& operator=(const float value);
+	GLSLAttrib& operator=(const glm::vec2 value);
+	GLSLAttrib& operator=(const glm::vec3 value);
+	GLSLAttrib& operator=(const glm::vec4 value);
+
+	GLSLAttrib& operator=(const bool value);
+	GLSLAttrib& operator=(const glm::bvec2 value);
+	GLSLAttrib& operator=(const glm::bvec3 value);
+	GLSLAttrib& operator=(const glm::bvec4 value);
+
+	GLSLAttrib& operator=(const glm::mat2 value);
+	GLSLAttrib& operator=(const glm::mat3 value);
+	GLSLAttrib& operator=(const glm::mat4 value);
+
 	GLSLAttrib& operator=(Texture* value);
 
 private:
@@ -46,7 +70,7 @@ public:
 	void bind() const;
 	void unbind() const;
 
-	inline GLSLAttrib& arg(const std::string& arg) { return (*this)[arg]; }
+	inline GLSLAttrib& uniform(const std::string& arg) { return (*this)[arg]; }
 
 	GLSLAttrib& operator[](const std::string& arg);
 

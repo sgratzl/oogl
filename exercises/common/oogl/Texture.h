@@ -23,11 +23,10 @@ class Texture;
 typedef std::shared_ptr<Texture> TexturePtr;
 
 class Texture {
-	friend class GLSLAttrib;
-	friend class FrameBufferObject;
 public:
 	static TexturePtr createColor(const glm::uvec2& dim, const GLint format = GL_RGBA);
 	static TexturePtr createDepth(const glm::uvec2& dim, const GLint format = GL_DEPTH_COMPONENT24);
+	static TexturePtr loadTexture(const std::string& fileName);
 
 	virtual ~Texture();
 
@@ -44,17 +43,32 @@ public:
 		return glm::uvec2(width, height);
 	}
 
-	void bind();
+	std::string getName() const {
+		return name;
+	}
+
+	void bind(glm::uint toTexture = 0);
 	void unbind();
 
 protected:
-	Texture(const glm::uvec2& dim, const GLuint textureId, GLint format);
+	friend class GLSLAttrib;
+	friend class FrameBufferObject;
 
+	Texture(const std::string& name, const glm::uvec2& dim, const GLuint textureId, GLint format);
+
+	bool isBound() const {
+		return bindedTexture >= 0;
+	}
 private:
+	std::string name;
 	GLuint textureId;
 	glm::uint width, height;
 	GLint format;
+	int bindedTexture;
 };
+
+TexturePtr loadTexture(const std::string& fileName);
+
 
 }
 #endif /* TEXTURE_H_ */

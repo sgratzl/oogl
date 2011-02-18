@@ -7,13 +7,24 @@
 
 #include <oogl/Texture.h>
 #include <oogl/gl_error.h>
+#include <IL/il.h>
+#include <IL/ilu.h>
+
+#include <exception>
+#include <sstream>
 
 #include <glm/glm_ostream.hpp>
 
+#define LOG_DEVIL_ERRORS() \
+	{\
+		for(ILenum err = ilGetError(); err != IL_NO_ERROR; err = ilGetError()) { \
+			LOG_ERROR << "DevIL_ERROR: " << iluErrorString(err) << std::endl; \
+		}\
+	}
+
 namespace oogl {
 
-
-TexturePtr Texture::createColor(const glm::uvec2& dim,const GLint format) {
+TexturePtr Texture::createColor(const glm::uvec2& dim, const GLint format) {
 	LOG_DEBUG << "create color texture: " << dim << std::endl;
 	GLuint textureId;
 	glGenTextures(1, &textureId);
@@ -25,12 +36,12 @@ TexturePtr Texture::createColor(const glm::uvec2& dim,const GLint format) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	LOG_GL_ERRORS();
 
-	TexturePtr tex(new Texture(dim, textureId, format));
+	TexturePtr tex(new Texture("generated",dim, textureId, format));
 	tex->unbind();
 	return tex;
 }
 
-TexturePtr Texture::createDepth(const glm::uvec2& dim,const GLint format) {
+TexturePtr Texture::createDepth(const glm::uvec2& dim, const GLint format) {
 	LOG_DEBUG << "create depth texture: " << dim << std::endl;
 	GLuint textureId;
 	glGenTextures(1, &textureId);
@@ -43,27 +54,80 @@ TexturePtr Texture::createDepth(const glm::uvec2& dim,const GLint format) {
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	LOG_GL_ERRORS();
 
-	TexturePtr tex(new Texture(dim, textureId, format));
+	TexturePtr tex(new Texture("generated",dim, textureId, format));
 	tex->unbind();
 	return tex;
 }
 
+TexturePtr Texture::loadTexture(const std::string& fileName) {
+	LOG_INFO << "load texture: " << fileName << std::endl;
 
-Texture::Texture(const glm::uvec2& dim,const GLuint textureId, GLint format):
-		width(dim.x), height(dim.y), textureId(textureId), format(format) {
+	static bool ilInitialized = false;
+	if(!ilInitialized) {
+		LOG_INFO << "initialize DevIL" << std::endl;
+		ilInit();
+		iluInit();
+		LOG_DEVIL_ERRORS()
+		ilInitialized = true;
+	}
+
+	ILuint img;
+	ilGenImages(1, &img);
+	ilBindImage(img);
+	if (!ilLoadImage(fileName.c_str())) {
+		LOG_ERROR << "can't load image: " << fileName << std::endl;
+		LOG_DEVIL_ERRORS()
+		ilDeleteImages(1,&img);
+		throw std::runtime_error("can't load image: "+fileName);
+	}
+
+	GLuint textureId;
+	glEnable(GL_TEXTURE_2D);
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glm::ivec2 dim(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
+	GLint format = ilGetInteger(IL_IMAGE_FORMAT);
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), dim.x, dim.y, 0, format, ilGetInteger(IL_IMAGE_TYPE), ilGetData());
+
+	LOG_GL_ERRORS();
+
+	ilDeleteImages(1, &img);
+	LOG_DEVIL_ERRORS();
+
+	LOG_INFO << "loaded texture: " << fileName << dim << std::endl;
+
+	TexturePtr tex(new Texture(fileName, glm::uvec2(dim.x,dim.y), textureId, format));
+	tex->unbind();
+	return tex;
+}
+
+Texture::Texture(const std::string& name, const glm::uvec2& dim, const GLuint textureId, GLint format) :
+	name(name), width(dim.x), height(dim.y), textureId(textureId), format(format), bindedTexture(-1) {
 
 }
 
 Texture::~Texture() {
-	if(textureId)
+	if (textureId)
 		glDeleteTextures(1, &textureId);
 }
 
-void Texture::bind() {
+void Texture::bind(glm::uint toTexture) {
+	bindedTexture = toTexture;
+	glEnable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 }
 void Texture::unbind() {
 	glBindTexture(GL_TEXTURE_2D, 0);
+	bindedTexture = -1;
+}
+
+TexturePtr loadTexture(const std::string& fileName) {
+	return Texture::loadTexture(fileName);
 }
 
 }

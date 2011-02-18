@@ -109,7 +109,6 @@ FrameBufferObject::~FrameBufferObject() {
 }
 
 void FrameBufferObject::begin(int target) {
-	//TODO
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebufferEXT(GL_FRAMEBUFFER, fb);
 	glViewport(0, 0, dim.x, dim.y);
@@ -117,7 +116,6 @@ void FrameBufferObject::begin(int target) {
 	glReadBuffer(buffer[target]);
 }
 void FrameBufferObject::beginDepth() {
-	//TODO
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebufferEXT(GL_FRAMEBUFFER, fb);
 
