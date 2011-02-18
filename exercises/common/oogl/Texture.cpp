@@ -9,6 +9,7 @@
 #include <oogl/gl_error.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
+#include <IL/ilut.h>
 
 #include <exception>
 #include <sstream>
@@ -64,9 +65,11 @@ TexturePtr Texture::loadTexture(const std::string& fileName) {
 
 	static bool ilInitialized = false;
 	if(!ilInitialized) {
-		LOG_INFO << "initialize DevIL" << std::endl;
+		LOG_DEBUG << "initialize DevIL" << std::endl;
 		ilInit();
 		iluInit();
+		ilutInit();
+		ilutRenderer(ILUT_OPENGL);
 		LOG_DEVIL_ERRORS()
 		ilInitialized = true;
 	}
@@ -81,27 +84,18 @@ TexturePtr Texture::loadTexture(const std::string& fileName) {
 		throw std::runtime_error("can't load image: "+fileName);
 	}
 
-	GLuint textureId;
-	glEnable(GL_TEXTURE_2D);
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glm::ivec2 dim(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
-	GLint format = ilGetInteger(IL_IMAGE_FORMAT);
-	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), dim.x, dim.y, 0, format, ilGetInteger(IL_IMAGE_TYPE), ilGetData());
-
+	GLuint textureId = ilutGLBindTexImage();
 	LOG_GL_ERRORS();
+
+	glm::uvec2 dim(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
+	TexturePtr tex(new Texture(fileName, glm::uvec2(dim.x,dim.y), textureId, ilGetInteger(IL_IMAGE_FORMAT)));
+	tex->unbind();
 
 	ilDeleteImages(1, &img);
 	LOG_DEVIL_ERRORS();
 
 	LOG_INFO << "loaded texture: " << fileName << dim << std::endl;
 
-	TexturePtr tex(new Texture(fileName, glm::uvec2(dim.x,dim.y), textureId, format));
-	tex->unbind();
 	return tex;
 }
 
@@ -118,7 +112,7 @@ Texture::~Texture() {
 void Texture::bind(glm::uint toTexture) {
 	bindedTexture = toTexture;
 	glEnable(GL_TEXTURE_2D);
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + toTexture);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 }
 void Texture::unbind() {

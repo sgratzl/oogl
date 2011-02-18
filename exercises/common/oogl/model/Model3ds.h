@@ -49,6 +49,10 @@ private:
 	void renderMeshImpl(Lib3dsMesh *mesh);
 
 	void dump();
+
+	bool hasSingleMaterial(Lib3dsMesh *mesh);
+	oogl::Texture* applyMaterial(Lib3dsMaterial *material);
+	std::string getDirectory(const std::string& fileName);
 };
 
 }}

@@ -19,7 +19,7 @@ public:
 
 	void begin();
 	void end();
-	void draw();
+	void render();
 
 private:
 	GLuint id;

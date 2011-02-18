@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
 #include <glm/glm_ostream.hpp>
 
+#include <glm/gtc/type_ptr.hpp>
+
 
 namespace oogl {
 namespace model {
@@ -63,8 +65,6 @@ void Model3ds::loadFile() {
 
 
 	static float bmin[3], bmax[3];
-	static float sx, sy, sz, size; /* bounding box dimensions */
-	static float cx, cy, cz;  /* bounding box center */
 	lib3ds_file_bounding_box_of_nodes(file, 1, 0, 0, bmin, bmax, NULL);
 
 	boundingBox.min = glm::vec3(bmin[0],bmin[1],bmin[2]);
@@ -97,7 +97,7 @@ void Model3ds::renderNode(Lib3dsNode *node) {
 	assert(file != NULL);
 	{
 		for (Lib3dsNode *child = node->childs; child != NULL; child = child->next)
-			renderNode(child); //render all child nodes of this note
+			renderNode(child); //render all child nodes of this node
 	}
 
 	switch (node->type) {
@@ -105,25 +105,25 @@ void Model3ds::renderNode(Lib3dsNode *node) {
 		renderMeshNode(node);
 		break;
 	case LIB3DS_NODE_AMBIENT_COLOR:
-		LOG_DEBUG << "can' render node type ambient color" << std::endl;
+		LOG_DEBUG << "can' render node type: ambient color" << std::endl;
 		break;
 	case LIB3DS_NODE_CAMERA:
-		LOG_DEBUG << "can' render node type camera" << std::endl;
+		LOG_DEBUG << "can' render node type: camera" << std::endl;
 		break;
 	case LIB3DS_NODE_CAMERA_TARGET:
-		LOG_DEBUG << "can' render node type camera target" << std::endl;
+		LOG_DEBUG << "can' render node type: camera target" << std::endl;
 		break;
 	case LIB3DS_NODE_OMNILIGHT:
-		LOG_DEBUG << "can' render node type omnilight" << std::endl;
+		LOG_DEBUG << "can' render node type: omnilight" << std::endl;
 		break;
 	case LIB3DS_NODE_SPOTLIGHT:
-		LOG_DEBUG << "can' render node type spotlight" << std::endl;
+		LOG_DEBUG << "can' render node type: spotlight" << std::endl;
 		break;
 	case LIB3DS_NODE_SPOTLIGHT_TARGET:
-		LOG_DEBUG << "can' render node type spotlight target" << std::endl;
+		LOG_DEBUG << "can' render node type: spotlight target" << std::endl;
 		break;
 	default:
-		LOG_WARN << "can' render node type unknown" << std::endl;
+		LOG_WARN << "can' render node type: unknown" << std::endl;
 	}
 }
 
@@ -156,7 +156,7 @@ void Model3ds::renderMeshNode(Lib3dsNode *node) {
 		glPushMatrix();
 
 		BoundingSphere bsphere = getBoundingSphere();
-		float normalize = 2/bsphere.radius;
+		float normalize = 1.f/bsphere.radius;
 
 		LOG_DEBUG << fileName << "normalize factor " << normalize << std::endl;
 
@@ -183,128 +183,152 @@ void Model3ds::renderMeshNode(Lib3dsNode *node) {
 	glCallList(mesh->user_id);
 }
 
-void Model3ds::renderMeshImpl(Lib3dsMesh *mesh) {
-	float (*normalL)[3] = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
-	Lib3dsMaterial *oldmat = (Lib3dsMaterial *) -1;
-	{
-		float M[4][4];
-		lib3ds_matrix_copy(M, mesh->matrix);
-		lib3ds_matrix_inv(M);
-		glMultMatrixf(&M[0][0]);
+bool Model3ds::hasSingleMaterial(Lib3dsMesh *mesh) {
+	//determine whether all faces uses the same material, if yes -> optimized behaviour
+	assert(mesh->nfaces > 0);
+	int materialIndex = mesh->faces[0].material;
+	for (int p = 1; p < mesh->nfaces; ++p) {
+		if (mesh->faces[p].material != materialIndex)
+			return false;
 	}
+	return true;
+}
+
+oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material) {
+	if (material->two_sided)
+		glDisable(GL_CULL_FACE);
+	else
+		glEnable(GL_CULL_FACE);
+
+	glm::vec4 ambient(material->ambient[0],material->ambient[1],material->ambient[2], 1-material->transparency);
+	glm::vec4 diffuse(material->diffuse[0],material->diffuse[1],material->diffuse[2], 1-material->transparency);
+	glm::vec4 specular(material->specular[0],material->specular[1],material->specular[2], 1-material->transparency);
+	float shininess = glm::clamp(glm::pow(2.f, 10.0f * material->shininess),0.f,128.f);
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+
+
+	if (material->texture1_map.name[0] != '\0') {
+		oogl::TexturePtr texture;
+		//has texture
+		Lib3dsTextureMap *tex = &material->texture1_map;
+		LOG_DEBUG << "found texture " << tex->name << std::endl;
+		if (tex->user_id == 0) { /*no texture yet*/
+			texture = oogl::loadTexture(getDirectory(fileName) + std::string(tex->name));
+			textures.push_back(texture);
+			tex->user_id = (int)textures.size(); //index + 1 to have 0 as invalid value
+		} else {
+			LOG_DEBUG << "reuse texture " << tex->user_id-1 << std::endl;
+			texture = textures.at((tex->user_id-1));
+		}
+		return texture.get();
+	}
+	return NULL;
+}
+
+std::string Model3ds::getDirectory(const std::string& fileName) {
+	if(fileName.find_last_of("/") != std::string::npos)
+		return fileName.substr(0,fileName.find_last_of("/")+1);
+	else if(fileName.find_last_of("\\") != std::string::npos)
+		return fileName.substr(0,fileName.find_last_of("\\")+1);
+	return "";
+}
+
+void Model3ds::renderMeshImpl(Lib3dsMesh *mesh) {
+
+	//calculate vertex normals
+	float (*normalL)[3] = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
 	lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
 
 	oogl::TexturePtr texture;
 
-	for (int p = 0; p < mesh->nfaces; ++p) {
-		Lib3dsMaterial *mat = 0;
-
-		if (mesh->faces[p].material >= 0) {
-			mat = file->materials[mesh->faces[p].material];
+	if(hasSingleMaterial(mesh)) {
+		LOG_DEBUG << "single material -> optimzed rendering" << std::endl;
+		int materialIndex = mesh->faces[0].material;
+		oogl::Texture* texture = NULL;
+		if(materialIndex >= 0) { //has material
+			Lib3dsMaterial *mat = file->materials[materialIndex];
+			texture = applyMaterial(mat);
 		}
 
-		if (mat != oldmat) { //material change
-			if (mat) {
-				if (mat->two_sided)
-					glDisable(GL_CULL_FACE);
-				else
-					glEnable(GL_CULL_FACE);
-				glDisable( GL_CULL_FACE);
-
-				if (mat->texture1_map.name[0]) { /* texture map? */
-					Lib3dsTextureMap *tex = &mat->texture1_map;
-					LOG_INFO << "found texture " << tex->name << std::endl;
-					if (tex->user_ptr == 0) { /*no texture yet*/
-						std::string dir = "";
-						if(fileName.find_last_of("/") != std::string::npos)
-							dir = fileName.substr(0,fileName.find_last_of("/")+1);
-						else if(fileName.find_last_of("\\") != std::string::npos)
-							dir = fileName.substr(0,fileName.find_last_of("\\")+1);
-						texture = oogl::loadTexture(dir + std::string(tex->name));
-						textures.push_back(texture);
-						tex->user_ptr = (void*)(int)textures.size();
-					} else {
-						LOG_DEBUG << "reuse texture " << (int)tex->user_ptr-1 << std::endl;
-						texture = textures.at(((int)tex->user_ptr-1));
-					}
-				}
-
-				{//apply material
-					LOG_DEBUG << "custom material" << std::endl;
-					float a[4], d[4], s[4];
-					int i;
-					for (i = 0; i < 3; ++i) {
-						a[i] = mat->ambient[i];
-						d[i] = mat->diffuse[i];
-						s[i] = mat->specular[i];
-					}
-					a[3] = d[3] = s[3] = 1.0f;
-
-					glMaterialfv(GL_FRONT, GL_AMBIENT, a);
-					glMaterialfv(GL_FRONT, GL_DIFFUSE, d);
-					glMaterialfv(GL_FRONT, GL_SPECULAR, s);
-				}
-				float shininess = pow(2.f, 10.0f * mat->shininess);
-				glMaterialf(GL_FRONT, GL_SHININESS, shininess <= 128 ? shininess : 128);
-			} else {
-				LOG_DEBUG << "default material" << std::endl;
-				const float a[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
-				const float d[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
-				const float s[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-				glMaterialfv(GL_FRONT, GL_AMBIENT, a);
-				glMaterialfv(GL_FRONT, GL_DIFFUSE, d);
-				glMaterialfv(GL_FRONT, GL_SPECULAR, s);
-				glMaterialf(GL_FRONT, GL_SHININESS, pow(2.f, 10.0f * 0.5f));
-			}
-			oldmat = mat;
-		} else if (mat != NULL && mat->texture1_map.name[0]) {
-			Lib3dsTextureMap *tex = &mat->texture1_map;
-			if (tex != NULL && tex->user_ptr != NULL) {
-				texture = textures.at(((int)tex->user_ptr-1));
-			}
-		}
-
-		{
-			int i;
-
-			GLboolean tex_was_enabled = glIsEnabled(GL_TEXTURE_2D);
-			if (texture.get() != NULL) {
-				LOG_DEBUG << "bind texture " << texture->getName() << std::endl;
-				texture->bind(0);
-			}
-
+		if(texture != NULL) {
+			texture->bind();
 			glBegin( GL_TRIANGLES);
 			{
-				if (texture.get() != NULL) {
-					for (i = 0; i < 3; ++i) {
+				for(int p = 0; p < mesh->nfaces; ++p) {
+					Lib3dsFace *face = &(mesh->faces[p]);
+					for (int i = 0; i < 3; ++i) {
 						glNormal3fv(normalL[3 * p + i]);
-						glTexCoord2f(mesh->texcos[mesh->faces[p].index[i]][0], mesh->texcos[mesh->faces[p].index[i]][1]);
-						glVertex3fv(mesh->vertices[mesh->faces[p].index[i]]);
-					}
-				} else  {
-					for (i = 0; i < 3; ++i) {
-						glNormal3fv(normalL[3 * p + i]);
-						glVertex3fv(mesh->vertices[mesh->faces[p].index[i]]);
+						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
+						glVertex3fv(mesh->vertices[face->index[i]]);
 					}
 				}
 			}
 			glEnd();
-
-			if (texture.get() != NULL) {
-				texture->unbind();
-				LOG_DEBUG << "unbind texture " << texture->getName() << std::endl;
-				if(!tex_was_enabled) //restore original state
-					glDisable(GL_TEXTURE_2D);
+			texture->unbind();
+		} else {
+			glBegin( GL_TRIANGLES);
+			{
+				for(int p = 0; p < mesh->nfaces; ++p) {
+					Lib3dsFace *face = &(mesh->faces[p]);
+					for (int i = 0; i < 3; ++i) {
+						glNormal3fv(normalL[3 * p + i]);
+						glVertex3fv(mesh->vertices[face->index[i]]);
+					}
+				}
 			}
 		}
+	} else { //multiple materials
+		int actMaterialIndex = -1;
+		oogl::Texture* actTexture = NULL;
+		for(int p = 0; p < mesh->nfaces; ++p) {
+			Lib3dsFace *face = &(mesh->faces[p]);
+			if(face->material != actMaterialIndex) { //material/texture change
+				if(actTexture != NULL)
+					actTexture->unbind();
+				actMaterialIndex = face->material;
+				actTexture = NULL;
+
+				if(actMaterialIndex >= 0) { //has material apply and save
+					Lib3dsMaterial *mat = file->materials[actMaterialIndex];
+					actTexture = applyMaterial(mat);
+					if(actTexture != NULL)
+						actTexture->bind();
+				}
+			}
+
+			glBegin( GL_TRIANGLES);
+			{
+				if(actTexture != NULL) {
+					for (int i = 0; i < 3; ++i) {
+						glNormal3fv(normalL[3 * p + i]);
+						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
+						glVertex3fv(mesh->vertices[face->index[i]]);
+					}
+				} else {
+					for (int i = 0; i < 3; ++i) {
+						glNormal3fv(normalL[3 * p + i]);
+						glVertex3fv(mesh->vertices[face->index[i]]);
+					}
+				}
+			}
+			glEnd();
+		}
+		if(actTexture != NULL)
+			actTexture->unbind();
 	}
 
 	free(normalL);
 }
 
 void Model3ds::dump() {
+	if(!LOG_IS_INFO_ENABLED) return;
+
 	BoundingSphere bs = getBoundingSphere();
-	LOG_WARN << fileName << std::endl
+	LOG_INFO << fileName << std::endl
 		<< "\t" << "name: " << file->name << std::endl
 		<< "\t" << "boundingBox: " << boundingBox.min << " - " << boundingBox.max << std::endl
 		<< "\t" << "boundingSphere: " << bs.center << " - " << bs.radius << std::endl

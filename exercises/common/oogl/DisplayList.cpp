@@ -26,8 +26,12 @@ void DisplayList::end() {
 	glEndList();
 }
 
-void DisplayList::draw() {
+void DisplayList::render() {
+	glPushMatrix();
+
 	glCallList(id);
+
+	glPopMatrix();
 }
 
 }
