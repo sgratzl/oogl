@@ -23,8 +23,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
 #include <utils/log.h>
 
-#include <glm/glm_ostream.hpp>
+#include <cstring>
 
+#include <glm/glm_ostream.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 

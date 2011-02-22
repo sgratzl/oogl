@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <stdexcept>
 #include <oogl/Model.h>
 #include <oogl/model/Model3ds.h>
 
@@ -32,7 +33,7 @@ ModelPtr loadModel(const std::string& fileName) {
 		return ModelPtr(new model::Model3ds(fileName));
 	}
 	throw std::runtime_error("unsupported model type: "+fileName);
-	return NULL;
+	return ModelPtr();
 }
 
 }

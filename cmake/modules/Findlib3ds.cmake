@@ -4,13 +4,13 @@ find_path( lib3ds_INCLUDE_DIR NAMES lib3ds.h
 		${LIB3DS_ROOT}/include
 		${LIB3DS_ROOT}/src
 	)
-find_library(lib3ds_LIBRARY NAMES lib3ds lib3ds-2_0
+find_library(lib3ds_LIBRARY NAMES lib3ds lib3ds-2_0 3ds 3ds-2_0
 	HINTS
 		${LIB3DS_ROOT}/Release
 		${LIB3DS_ROOT}/lib
 		${CMAKE_BINARY_DIR}/lib
 	)
-find_library(lib3ds_LIBRARY_DEBUG NAMES lib3dsd lib3ds-2_0d
+find_library(lib3ds_LIBRARY_DEBUG NAMES lib3dsd lib3ds-2_0d 3dsd 3ds-2_0d
 	HINTS
 		${LIB3DS_ROOT}/Debug
 		${LIB3DS_ROOT}/lib

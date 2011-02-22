@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <stdexcept>
 #include <oogl/GLSLShader.h>
 #include <oogl/gl_error.h>
 #include <iostream>

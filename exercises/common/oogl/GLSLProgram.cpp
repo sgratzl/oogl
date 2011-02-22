@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <sstream>
+#include <stdexcept>
 
 namespace oogl {
 

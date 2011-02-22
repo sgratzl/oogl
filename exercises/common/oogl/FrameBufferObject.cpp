@@ -7,6 +7,7 @@
 
 #include <oogl/FrameBufferObject.h>
 #include <cassert>
+#include <stdexcept>
 
 namespace oogl {
 

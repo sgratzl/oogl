@@ -13,6 +13,7 @@
 
 #include <exception>
 #include <sstream>
+#include <stdexcept>
 
 #include <glm/glm_ostream.hpp>
 
