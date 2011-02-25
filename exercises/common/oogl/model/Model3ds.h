@@ -41,7 +41,7 @@ public:
 private:
 	Lib3dsFile *file;
 	float currentFrame;
-	std::vector<oogl::TexturePtr> textures;
+	std::vector<oogl::Texture*> textures;
 
 	void loadFile();
 	void renderNode(Lib3dsNode *node);

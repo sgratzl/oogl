@@ -26,7 +26,7 @@
 
 namespace oogl {
 
-TexturePtr Texture::createColor(const glm::uvec2& dim, const GLint format) {
+Texture* Texture::createColor(const glm::uvec2& dim, const GLint format) {
 	LOG_DEBUG << "create color texture: " << dim << std::endl;
 	GLuint textureId;
 	glGenTextures(1, &textureId);
@@ -38,12 +38,12 @@ TexturePtr Texture::createColor(const glm::uvec2& dim, const GLint format) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	LOG_GL_ERRORS();
 
-	TexturePtr tex(new Texture("generated",dim, textureId, format));
+	Texture* tex = new Texture("generated",dim, textureId, format);
 	tex->unbind();
 	return tex;
 }
 
-TexturePtr Texture::createDepth(const glm::uvec2& dim, const GLint format) {
+Texture* Texture::createDepth(const glm::uvec2& dim, const GLint format) {
 	LOG_DEBUG << "create depth texture: " << dim << std::endl;
 	GLuint textureId;
 	glGenTextures(1, &textureId);
@@ -56,12 +56,12 @@ TexturePtr Texture::createDepth(const glm::uvec2& dim, const GLint format) {
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	LOG_GL_ERRORS();
 
-	TexturePtr tex(new Texture("generated",dim, textureId, format));
+	Texture* tex = new Texture("generated",dim, textureId, format);
 	tex->unbind();
 	return tex;
 }
 
-TexturePtr Texture::loadTexture(const std::string& fileName) {
+Texture* Texture::loadTexture(const std::string& fileName) {
 	LOG_INFO << "load texture: " << fileName << std::endl;
 
 	static bool ilInitialized = false;
@@ -89,7 +89,7 @@ TexturePtr Texture::loadTexture(const std::string& fileName) {
 	LOG_GL_ERRORS();
 
 	glm::uvec2 dim(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
-	TexturePtr tex(new Texture(fileName, glm::uvec2(dim.x,dim.y), textureId, ilGetInteger(IL_IMAGE_FORMAT)));
+	Texture* tex = new Texture(fileName, glm::uvec2(dim.x,dim.y), textureId, ilGetInteger(IL_IMAGE_FORMAT));
 	tex->unbind();
 
 	ilDeleteImages(1, &img);
@@ -106,6 +106,7 @@ Texture::Texture(const std::string& name, const glm::uvec2& dim, const GLuint te
 }
 
 Texture::~Texture() {
+	LOG_DEBUG << "free texture " << name << std::endl;
 	if (textureId)
 		glDeleteTextures(1, &textureId);
 }
@@ -121,7 +122,7 @@ void Texture::unbind() {
 	bindedTexture = -1;
 }
 
-TexturePtr loadTexture(const std::string& fileName) {
+Texture* loadTexture(const std::string& fileName) {
 	return Texture::loadTexture(fileName);
 }
 

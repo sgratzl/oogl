@@ -13,31 +13,31 @@ namespace oogl {
 
 const GLenum buffer[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 
-FrameBufferObjectPtr FrameBufferObject::create(glm::uvec2 dim, const unsigned textureCount, const GLint textureFormat, const GLint depthFormat) {
+FrameBufferObject* FrameBufferObject::create(glm::uvec2 dim, const unsigned textureCount, const GLint textureFormat, const GLint depthFormat) {
 	assert(textureCount <= 4);
 
-	std::vector<TexturePtr> textures;
+	std::vector<Texture*> textures;
 	for(unsigned i = 0; i< textureCount; ++i) {
 		textures.push_back(Texture::createColor(dim, textureFormat));
 	}
 
-	TexturePtr depthTexture;
+	Texture* depthTexture = NULL;
 	if(depthFormat > 0) {
 		depthTexture = Texture::createDepth(dim, depthFormat);
 	}
 
-	return FrameBufferObjectPtr(new FrameBufferObject(dim, textures, depthTexture));
+	return new FrameBufferObject(dim, textures, depthTexture);
 }
 
-FrameBufferObjectPtr FrameBufferObject::createDepthOnly(glm::uvec2 dim, const GLint depthFormat) {
-	std::vector<TexturePtr> textures;
+FrameBufferObject* FrameBufferObject::createDepthOnly(glm::uvec2 dim, const GLint depthFormat) {
+	std::vector<Texture*> textures;
 
-	TexturePtr depthTexture = Texture::createDepth(dim, depthFormat);
+	Texture* depthTexture = Texture::createDepth(dim, depthFormat);
 
-	return FrameBufferObjectPtr(new FrameBufferObject(dim, textures, depthTexture));
+	return new FrameBufferObject(dim, textures, depthTexture);
 }
 
-FrameBufferObject::FrameBufferObject(glm::uvec2 dim, const std::vector<TexturePtr>& textures, TexturePtr depthTexture) :
+FrameBufferObject::FrameBufferObject(glm::uvec2 dim, const std::vector<Texture*>& textures, Texture* depthTexture) :
 	dim(dim), textures(textures), depthTexture(depthTexture) {
 	LOG_DEBUG << "create fbo: " << dim.x << " " << dim.y << std::endl;
 
@@ -56,7 +56,7 @@ FrameBufferObject::FrameBufferObject(glm::uvec2 dim, const std::vector<TexturePt
 	// attach
 	assert(textures.size() <= 4);
 	for (unsigned i = 0; i < textures.size(); ++i) {
-		TexturePtr tex = textures[i];
+		Texture* tex = textures[i];
 		assert (dim.x == tex->getWidth() && dim.y == tex->getHeight());
 		LOG_DEBUG << "attach color texture " << i << std::endl;
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER, buffer[i], GL_TEXTURE_2D, tex->textureId, 0);
@@ -103,7 +103,12 @@ void FrameBufferObject::checkError() {
 FrameBufferObject::~FrameBufferObject() {
 	end();
 
+	for(std::vector<Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+		delete *it;
 	textures.clear();
+
+	if(depthTexture != NULL)
+		delete depthTexture;
 
 	if (fb)
 		glDeleteFramebuffersEXT(1, &fb);
@@ -134,4 +139,5 @@ void FrameBufferObject::beginAll() {
 void FrameBufferObject::end() {
 	glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 }
+
 }

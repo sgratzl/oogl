@@ -38,8 +38,13 @@ Model3ds::Model3ds(std::string fileName) :
 }
 
 Model3ds::~Model3ds() {
+	LOG_DEBUG << "free model " << fileName << std::endl;
 	if (file)
 		lib3ds_file_free(file);
+
+	for(std::vector<Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+		delete *it;
+	textures.clear();
 }
 
 void Model3ds::loadFile() {
@@ -213,7 +218,7 @@ oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material) {
 
 
 	if (material->texture1_map.name[0] != '\0') {
-		oogl::TexturePtr texture;
+		oogl::Texture* texture;
 		//has texture
 		Lib3dsTextureMap *tex = &material->texture1_map;
 		LOG_DEBUG << "found texture " << tex->name << std::endl;
@@ -225,7 +230,7 @@ oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material) {
 			LOG_DEBUG << "reuse texture " << tex->user_id-1 << std::endl;
 			texture = textures.at((tex->user_id-1));
 		}
-		return texture.get();
+		return texture;
 	}
 	return NULL;
 }
@@ -244,7 +249,7 @@ void Model3ds::renderMeshImpl(Lib3dsMesh *mesh) {
 	float (*normalL)[3] = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
 	lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
 
-	oogl::TexturePtr texture;
+	oogl::Texture* texture = NULL;
 
 	if(hasSingleMaterial(mesh)) {
 		LOG_DEBUG << "single material -> optimzed rendering" << std::endl;

@@ -20,13 +20,10 @@
 
 namespace oogl {
 
-class FrameBufferObject;
-typedef std::shared_ptr<FrameBufferObject> FrameBufferObjectPtr;
-
 class FrameBufferObject {
 public:
-	static FrameBufferObjectPtr create(glm::uvec2 dim, const unsigned textureCount = 1, const GLint textureFormat=GL_RGBA, const GLint depthFormat = -1);
-	static FrameBufferObjectPtr createDepthOnly(glm::uvec2 dim, const GLint depthFormat=GL_DEPTH_COMPONENT24);
+	static FrameBufferObject* create(glm::uvec2 dim, const unsigned textureCount = 1, const GLint textureFormat=GL_RGBA, const GLint depthFormat = -1);
+	static FrameBufferObject* createDepthOnly(glm::uvec2 dim, const GLint depthFormat=GL_DEPTH_COMPONENT24);
 
 	virtual ~FrameBufferObject();
 
@@ -35,16 +32,16 @@ public:
 	void beginAll();
 	void end();
 
-	TexturePtr getTexture(int target = 0) { return textures[target]; }
-	TexturePtr getDepthTexture() { return depthTexture; };
+	Texture* getTexture(int target = 0) { return textures[target]; }
+	Texture* getDepthTexture() { return depthTexture; };
 
 protected:
-	FrameBufferObject(glm::uvec2 dim, const std::vector<TexturePtr>& textures, TexturePtr depthTexture);
+	FrameBufferObject(glm::uvec2 dim, const std::vector<Texture*>& textures, Texture* depthTexture);
 
 private:
 	glm::uvec2 dim;
-	std::vector<TexturePtr> textures;
-	TexturePtr depthTexture;
+	std::vector<Texture*> textures;
+	Texture* depthTexture;
 	GLuint fb, drb;
 
 	void checkError();

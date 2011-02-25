@@ -13,9 +13,6 @@
 #include <string>
 
 #include <memory>
-#ifndef WIN32
-# include <tr1/memory>
-#endif
 
 namespace oogl {
 
@@ -55,9 +52,7 @@ protected:
 	std::string fileName;
 };
 
-typedef std::shared_ptr<Model> ModelPtr;
-
-ModelPtr loadModel(const std::string& fileName);
+Model* loadModel(const std::string& fileName);
 
 }
 

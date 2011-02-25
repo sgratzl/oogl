@@ -25,6 +25,7 @@ GLSLShader::GLSLShader(const ShaderType type, const std::string& filename): type
 }
 
 GLSLShader::~GLSLShader() {
+	LOG_DEBUG << "free shader " << filename << std::endl;
 	glDeleteShader(shader);
 }
 

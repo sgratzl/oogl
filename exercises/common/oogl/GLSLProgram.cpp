@@ -15,14 +15,21 @@
 
 namespace oogl {
 
-GLSLProgram::GLSLProgram(const std::vector<GLSLShader> shaders) :
+GLSLProgram::GLSLProgram(const std::vector<GLSLShader*> shaders) :
 	prog(0), shaders(shaders) {
 	create();
 	link();
 }
 
 GLSLProgram::~GLSLProgram() {
+	LOG_DEBUG << "free program " << prog << std::endl;
 	glDeleteProgram(prog);
+
+	for(GLSLShaders::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+		delete *it;
+	}
+	shaders.clear();
+
 	locationCache.clear();
 }
 
@@ -30,7 +37,7 @@ void GLSLProgram::create() {
 	prog = glCreateProgram();
 	LOG_GL_ERRORS();
 	for (GLSLShaders::iterator it = shaders.begin(); it != shaders.end(); ++it) {
-		glAttachShader(prog, it->shader);
+		glAttachShader(prog, (*it)->shader);
 	}
 	LOG_GL_ERRORS();
 }
@@ -57,41 +64,40 @@ void GLSLProgram::link() {
 }
 
 void GLSLProgram::bind() const {
-	LOG_DEBUG << "bind program" << std::endl;
+	LOG_DEBUG << "bind program: " << prog << std::endl;
 	glUseProgram(prog);
 }
 void GLSLProgram::unbind() const {
 	glUseProgram(0);
 }
 
-GLSLProgramPtr GLSLProgram::create(const std::string& vertexShaderFile, const std::string& fragmentShaderFile) {
-	GLSLShader vertex(GLSLShader::VERTEX, vertexShaderFile);
-	GLSLShader fragment(GLSLShader::FRAGMENT, fragmentShaderFile);
+GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std::string& fragmentShaderFile) {
+	GLSLShader* vertex = new GLSLShader(GLSLShader::VERTEX, vertexShaderFile);
+	GLSLShader* fragment = new GLSLShader(GLSLShader::FRAGMENT, fragmentShaderFile);
 
 	GLSLShaders shaders;
 	shaders.push_back(vertex);
 	shaders.push_back(fragment);
 
-	return GLSLProgramPtr(new GLSLProgram(shaders));
+	return new GLSLProgram(shaders);
 }
 
-GLSLProgramPtr GLSLProgram::create(const std::string& vertexShaderFile, const std::string& geometryShaderFile, const std::string& fragmentShaderFile) {
-	GLSLShader vertex(GLSLShader::VERTEX, vertexShaderFile);
-	GLSLShader fragment(GLSLShader::FRAGMENT, fragmentShaderFile);
-	GLSLShader geometry(GLSLShader::GEOMETRY, geometryShaderFile);
+GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std::string& geometryShaderFile, const std::string& fragmentShaderFile) {
+	GLSLShader* vertex = new GLSLShader(GLSLShader::VERTEX, vertexShaderFile);
+	GLSLShader* fragment = new GLSLShader(GLSLShader::FRAGMENT, fragmentShaderFile);
+	GLSLShader* geometry = new GLSLShader(GLSLShader::GEOMETRY, geometryShaderFile);
 
 	GLSLShaders shaders;
 	shaders.push_back(vertex);
 	shaders.push_back(fragment);
 	shaders.push_back(geometry);
 
-	return GLSLProgramPtr(new GLSLProgram(shaders));
+	return new GLSLProgram(shaders);
 }
-static GLSLProgramPtr create();
 
-GLSLAttrib& GLSLProgram::operator[](const std::string& arg) {
+GLSLAttrib GLSLProgram::operator[](const std::string& arg) {
 	if (locationCache.find(arg) != locationCache.end()) {
-		return *locationCache[arg];
+		return locationCache[arg];
 	}
 	GLint id = glGetUniformLocation(prog, arg.c_str());
 	if (id < 0) {
@@ -110,10 +116,9 @@ GLSLAttrib& GLSLProgram::operator[](const std::string& arg) {
 			break;
 		}
 	}
-	GLSLAttribPtr att(new GLSLAttrib(id));
-	locationCache[arg] = att;
+	locationCache[arg] = id;
 
-	return *locationCache[arg].get();
+	return locationCache[arg];
 }
 
 GLSLAttrib::GLSLAttrib(const GLint id) :

@@ -57,32 +57,31 @@ private:
 	GLint id;
 };
 
-typedef std::shared_ptr<GLSLAttrib> GLSLAttribPtr;
-
-class GLSLProgram;
-typedef std::shared_ptr<GLSLProgram> GLSLProgramPtr;
-
 class GLSLProgram {
 public:
-	GLSLProgram(std::vector<GLSLShader> shaders);
+	GLSLProgram(std::vector<GLSLShader*> shaders);
 	virtual ~GLSLProgram();
 
 	void bind() const;
 	void unbind() const;
 
-	inline GLSLAttrib& uniform(const std::string& arg) { return (*this)[arg]; }
+	GLuint getId() const {
+		return prog;
+	}
 
-	GLSLAttrib& operator[](const std::string& arg);
+	inline GLSLAttrib uniform(const std::string& arg) { return (*this)[arg]; }
 
-	static GLSLProgramPtr create(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
-	static GLSLProgramPtr create(const std::string& vertexShaderFile, const std::string& geometryShaderFile, const std::string& fragmentShaderFile);
+	GLSLAttrib operator[](const std::string& arg);
+
+	static GLSLProgram* create(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
+	static GLSLProgram* create(const std::string& vertexShaderFile, const std::string& geometryShaderFile, const std::string& fragmentShaderFile);
 
 private:
 	GLuint prog;
-	typedef std::vector<GLSLShader> GLSLShaders;
+	typedef std::vector<GLSLShader*> GLSLShaders;
 	GLSLShaders shaders;
 
-	std::map<const std::string, GLSLAttribPtr> locationCache;
+	std::map<const std::string, GLint> locationCache;
 
 	void create();
 	void link();

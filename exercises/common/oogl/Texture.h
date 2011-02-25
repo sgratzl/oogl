@@ -19,14 +19,11 @@
 
 namespace oogl {
 
-class Texture;
-typedef std::shared_ptr<Texture> TexturePtr;
-
 class Texture {
 public:
-	static TexturePtr createColor(const glm::uvec2& dim, const GLint format = GL_RGBA);
-	static TexturePtr createDepth(const glm::uvec2& dim, const GLint format = GL_DEPTH_COMPONENT24);
-	static TexturePtr loadTexture(const std::string& fileName);
+	static Texture* createColor(const glm::uvec2& dim, const GLint format = GL_RGBA);
+	static Texture* createDepth(const glm::uvec2& dim, const GLint format = GL_DEPTH_COMPONENT24);
+	static Texture* loadTexture(const std::string& fileName);
 
 	virtual ~Texture();
 
@@ -67,7 +64,7 @@ private:
 	int bindedTexture;
 };
 
-TexturePtr loadTexture(const std::string& fileName);
+Texture* loadTexture(const std::string& fileName);
 
 
 }

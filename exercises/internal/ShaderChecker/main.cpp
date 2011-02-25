@@ -44,8 +44,7 @@ int main(int argc, char** argv) {
 	case 2: {
 		std::string fragShader = std::string(argv[1]);
 		try {
-			oogl::GLSLShader *s = new oogl::GLSLShader(oogl::GLSLShader::FRAGMENT, fragShader);
-			delete s;
+			std::auto_ptr<oogl::GLSLShader> s(new oogl::GLSLShader(oogl::GLSLShader::FRAGMENT, fragShader));
 			LOG_INFO << fragShader << ": success" << std::endl;
 		} catch (std::exception e) {
 			LOG_ERROR << fragShader << ": error occurred: " << e.what() << std::endl;
@@ -57,7 +56,7 @@ int main(int argc, char** argv) {
 		std::string vertShader = std::string(argv[1]);
 		std::string fragShader = std::string(argv[2]);
 		try {
-			oogl::GLSLProgramPtr p = oogl::GLSLProgram::create(vertShader, fragShader);
+			std::auto_ptr<oogl::GLSLProgram> p(oogl::GLSLProgram::create(vertShader, fragShader));
 			LOG_INFO << "program(" << vertShader <<", " << fragShader << ")" << ": success" << std::endl;
 		} catch (std::exception e) {
 			LOG_ERROR << "program(" << vertShader <<", " << fragShader << ")" << ": error occurred: " << e.what() << std::endl;
@@ -70,7 +69,7 @@ int main(int argc, char** argv) {
 		std::string geomShader = std::string(argv[2]);
 		std::string fragShader = std::string(argv[3]);
 		try {
-			oogl::GLSLProgramPtr p = oogl::GLSLProgram::create(vertShader, geomShader, fragShader);
+			std::auto_ptr<oogl::GLSLProgram> p(oogl::GLSLProgram::create(vertShader, geomShader, fragShader));
 			LOG_INFO << "program(" << vertShader <<", " << geomShader <<", " << fragShader << ")" << ": success" << std::endl;
 		} catch (std::exception e) {
 			LOG_ERROR << "program(" << vertShader <<", " << geomShader <<", " << fragShader << ")" << ": error occurred: " << e.what() << std::endl;
