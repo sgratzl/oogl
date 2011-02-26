@@ -71,6 +71,6 @@ if(IDE_TYPE STREQUAL "cdt")
 	set(ECLIPSE_CDT4_GENERATE_SOURCE_PROJECT ON)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++0x) #enable c++0x features
-endif()
+#if(CMAKE_COMPILER_IS_GNUCXX)
+#    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++0x) #enable c++0x features
+#endif()
