@@ -73,6 +73,7 @@ Texture* Texture::loadTexture(const std::string& fileName) {
 		ilutRenderer(ILUT_OPENGL);
 		LOG_DEVIL_ERRORS()
 		ilInitialized = true;
+		LOG_DEBUG << "initialized DevIL" << std::endl;
 	}
 
 	ILuint img;
@@ -95,7 +96,7 @@ Texture* Texture::loadTexture(const std::string& fileName) {
 	ilDeleteImages(1, &img);
 	LOG_DEVIL_ERRORS();
 
-	LOG_INFO << "loaded texture: " << fileName << dim << std::endl;
+	LOG_DEBUG << "loaded texture: " << fileName << dim << std::endl;
 
 	return tex;
 }

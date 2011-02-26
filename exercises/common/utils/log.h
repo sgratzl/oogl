@@ -14,7 +14,7 @@
 
 //which log level as default
 #ifndef LOG_LEVEL
-# define LOG_LEVEL LOG_LEVEL_DEBUG
+# define LOG_LEVEL LOG_LEVEL_INFO
 #endif
 
 #define _LOG_IMPL(stream, level) stream << level << " " << __FUNCTION__ << ":" << __LINE__ << ": "

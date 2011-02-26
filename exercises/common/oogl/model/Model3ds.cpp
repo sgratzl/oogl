@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
 #include <oogl/model/Model3ds.h>
 #include <oogl/Texture.h>
+#include <oogl/gl_error.h>
 
 #include <utils/log.h>
 
@@ -80,14 +81,29 @@ void Model3ds::loadFile() {
 
 	dump();
 
+	//preload all textures, to avoid lazy initialization of DevIL during rendering
+	for(int i = 0; i < file->nmaterials; ++i) {
+		Lib3dsMaterial *material = file->materials[i];
+		if (material->texture1_map.name[0] != '\0') {
+			//has texture
+			Lib3dsTextureMap *tex = &material->texture1_map;
+			LOG_DEBUG << "found texture " << tex->name << std::endl;
+			if (tex->user_id == 0) { /*no texture yet*/
+				oogl::Texture* texture = oogl::loadTexture(getDirectory(fileName) + std::string(tex->name));
+				textures.push_back(texture);
+				tex->user_id = (int)textures.size(); //index + 1 to have 0 as invalid value
+			}
+		}
+	}
+
 	LOG_DEBUG << "loaded " << fileName << std::endl;
 }
 
 void Model3ds::render() {
 	LOG_DEBUG << "render " << fileName << std::endl;
 
-	glEnable( GL_CULL_FACE);
-	glCullFace( GL_BACK);
+	//glEnable( GL_CULL_FACE);
+	//glCullFace( GL_BACK);
 
 	for (Lib3dsNode *node = file->nodes; node != NULL; node = node->next) {
 		renderNode(node);
@@ -156,7 +172,8 @@ void Model3ds::renderMeshNode(Lib3dsNode *node) {
 		assert(mesh);
 
 		mesh->user_id = glGenLists(1);
-		glNewList(mesh->user_id, GL_COMPILE);
+		glNewList(mesh->user_id, GL_COMPILE_AND_EXECUTE);
+		LOG_GL_ERRORS();
 
 		LOG_DEBUG << "render mesh impl " << node->name << std::endl;
 		glPushMatrix();
@@ -180,13 +197,13 @@ void Model3ds::renderMeshNode(Lib3dsNode *node) {
 		glTranslatef(-bsphere.center.x,-bsphere.center.y,-bsphere.center.z);
 
 		renderMeshImpl(mesh);
-
+		
 		glPopMatrix();
 
 		glEndList();
-	}
-
-	glCallList(mesh->user_id);
+	} else 
+		glCallList(mesh->user_id);
+	LOG_GL_ERRORS();
 }
 
 bool Model3ds::hasSingleMaterial(Lib3dsMesh *mesh) {
@@ -201,10 +218,10 @@ bool Model3ds::hasSingleMaterial(Lib3dsMesh *mesh) {
 }
 
 oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material) {
-	if (material->two_sided)
-		glDisable(GL_CULL_FACE);
-	else
-		glEnable(GL_CULL_FACE);
+	//if (material->two_sided)
+	//	glDisable(GL_CULL_FACE);
+	//else
+	//	glEnable(GL_CULL_FACE);
 
 	glm::vec4 ambient(material->ambient[0],material->ambient[1],material->ambient[2], 1-material->transparency);
 	glm::vec4 diffuse(material->diffuse[0],material->diffuse[1],material->diffuse[2], 1-material->transparency);
@@ -223,6 +240,7 @@ oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material) {
 		Lib3dsTextureMap *tex = &material->texture1_map;
 		LOG_DEBUG << "found texture " << tex->name << std::endl;
 		if (tex->user_id == 0) { /*no texture yet*/
+			LOG_ERROR << "here but shound't be there" << std::endl;
 			texture = oogl::loadTexture(getDirectory(fileName) + std::string(tex->name));
 			textures.push_back(texture);
 			tex->user_id = (int)textures.size(); //index + 1 to have 0 as invalid value
@@ -274,6 +292,7 @@ void Model3ds::renderMeshImpl(Lib3dsMesh *mesh) {
 				}
 			}
 			glEnd();
+			LOG_GL_ERRORS();
 			texture->unbind();
 		} else {
 			glBegin( GL_TRIANGLES);
@@ -331,10 +350,10 @@ void Model3ds::renderMeshImpl(Lib3dsMesh *mesh) {
 }
 
 void Model3ds::dump() {
-	if(!LOG_IS_INFO_ENABLED) return;
+	if(!LOG_IS_DEBUG_ENABLED) return;
 
 	BoundingSphere bs = getBoundingSphere();
-	LOG_INFO << fileName << std::endl
+	LOG_DEBUG << fileName << std::endl
 		<< "\t" << "name: " << file->name << std::endl
 		<< "\t" << "boundingBox: " << boundingBox.min << " - " << boundingBox.max << std::endl
 		<< "\t" << "boundingSphere: " << bs.center << " - " << bs.radius << std::endl
