@@ -53,6 +53,7 @@ void Model3ds::loadFile() {
 	file = lib3ds_file_open(fileName.c_str());
 	if (!file) {
 		LOG_ERROR << "invalid model " << fileName << std::endl;
+		throw std::runtime_error("invalid model: "+fileName);
 		return;
 	}
 

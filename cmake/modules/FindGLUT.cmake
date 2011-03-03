@@ -23,19 +23,19 @@
 
 IF (WIN32)
   FIND_PATH( GLUT_INCLUDE_DIR NAMES GL/glut.h
-    PATHS
+    HINTS
 		${GLUT_ROOT}
 		${GLUT_ROOT}/include )
-  FIND_LIBRARY( GLUT_glut_LIBRARY NAMES glut glut32 freeglut
-    PATHS
+  FIND_LIBRARY( GLUT_glut_LIBRARY NAMES freeglut glut glut32 
+    HINTS
 		${OPENGL_LIBRARY_DIR}
 		${GLUT_ROOT}/Release
 		${GLUT_ROOT}/lib
     )
-  FIND_LIBRARY( GLUT_glut_LIBRARY_DEBUG NAMES glutD glut32D freeglutD
-    PATHS
+  FIND_LIBRARY( GLUT_glut_LIBRARY_DEBUG NAMES freeglutD glutD glut32D freeglut glut glut32
+    HINTS
 		${OPENGL_LIBRARY_DIR}
-		${GLUT_ROOT}/Release
+		${GLUT_ROOT}/Debug
 		${GLUT_ROOT}/lib
     )
 ELSE (WIN32)

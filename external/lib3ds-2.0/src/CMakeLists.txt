@@ -23,8 +23,7 @@ ADD_LIBRARY(lib3ds SHARED
 	lib3ds_track.c
 	lib3ds_util.c
 	lib3ds_vector.c
-	lib3ds_viewport.c
-	lib3ds.rc)
+	lib3ds_viewport.c)
 
 IF(WIN32)
 	SET_TARGET_PROPERTIES(lib3ds PROPERTIES
