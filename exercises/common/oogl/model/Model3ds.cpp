@@ -180,7 +180,7 @@ void Model3ds::renderMeshNode(Lib3dsNode *node) {
 		glPushMatrix();
 
 		BoundingSphere bsphere = getBoundingSphere();
-		float normalize = 1.f/bsphere.radius;
+		float normalize = 2.f/bsphere.radius;
 
 		LOG_DEBUG << fileName << "normalize factor " << normalize << std::endl;
 
@@ -198,11 +198,11 @@ void Model3ds::renderMeshNode(Lib3dsNode *node) {
 		glTranslatef(-bsphere.center.x,-bsphere.center.y,-bsphere.center.z);
 
 		renderMeshImpl(mesh);
-		
+
 		glPopMatrix();
 
 		glEndList();
-	} else 
+	} else
 		glCallList(mesh->user_id);
 	LOG_GL_ERRORS();
 }
