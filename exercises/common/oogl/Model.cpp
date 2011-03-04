@@ -29,7 +29,7 @@ Model* loadModel(const std::string& fileName) {
 		ext = fileName.substr(fileName.find_last_of(".")+1);
 
 	if(ext == "3ds" || ext == "3DS" || ext == "3Ds" || ext == "3dS") {
-		LOG_INFO << "loading 3ds model " << fileName << std::endl;
+		LOG_DEBUG << "loading 3ds model " << fileName << std::endl;
 		return new model::Model3ds(fileName);
 	}
 	throw std::runtime_error("unsupported model type: "+fileName);

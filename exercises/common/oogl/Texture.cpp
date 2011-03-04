@@ -62,7 +62,7 @@ Texture* Texture::createDepth(const glm::uvec2& dim, const GLint format) {
 }
 
 Texture* Texture::loadTexture(const std::string& fileName) {
-	LOG_INFO << "load texture: " << fileName << std::endl;
+	LOG_DEBUG << "load texture: " << fileName << std::endl;
 
 	static bool ilInitialized = false;
 	if(!ilInitialized) {

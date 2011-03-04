@@ -1,6 +1,10 @@
 #set module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules )
 
+if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+	message(FATAL_ERROR "don't use the source directory as binary directory")
+endif()
+
 #set default build type
 if(CMAKE_BUILD_TYPE)
 	message(STATUS "have build type with ${CMAKE_BUILD_TYPE}")
