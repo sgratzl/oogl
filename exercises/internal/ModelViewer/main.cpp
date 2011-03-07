@@ -14,6 +14,9 @@
 
 
 std::auto_ptr<oogl::Model> model;
+bool leftMouseButtonActive = false;
+int mousePosX = 0, mousePosY = 0;
+float rotationX = 0, rotationY = 0;
 
 void init(std::string filename) {
 	model.reset(oogl::loadModel(filename));
@@ -31,6 +34,9 @@ void display() {
 	glLoadIdentity();
 
 	glTranslatef(0,0,-5);
+
+	glRotatef(rotationX, 0.0f, -1.0f, 0.0f);
+	glRotatef(rotationY, -1.0f, 0.0f, 0.0f);
 
 	model->render();
 
@@ -63,11 +69,25 @@ void keyboard(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
+
 void mouse(int button, int state, int x, int y) {
-	glutPostRedisplay();
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+		leftMouseButtonActive = true;
+	else
+		leftMouseButtonActive = false;
+
+	mousePosX = x;
+	mousePosY = y;
 }
 
 void mouseMotion(int x, int y) {
+	if (leftMouseButtonActive) {
+		rotationX += mousePosX - x;
+		rotationY += mousePosY - y;
+
+		mousePosX = x;
+		mousePosY = y;
+	}
 }
 
 
