@@ -17,3 +17,20 @@ function(package_exercise)
 	endif()
 endfunction(package_exercise)
 
+function(packageall_exercises)
+	if(NOT INTERNAL_AVALIABLE)
+		return()
+	endif()
+
+	find_package(ANT)
+
+	if(ANT_FOUND)
+		add_custom_target(packageAllExercises
+			"${ANT_EXE}" "-buildfile" "assembly.xml" "complete"
+			WORKING_DIRECTORY "${INTERNAL_DIR}"
+			COMMENT "running ANT" VERBATIM)
+	else()
+		message(WARNING "can't find ANT check your settings otherwise you won't be able to build a package")
+	endif()
+endfunction(packageall_exercises)
+
