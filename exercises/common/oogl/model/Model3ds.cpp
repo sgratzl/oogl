@@ -197,7 +197,6 @@ void Model3ds::renderMeshNode(Lib3dsNode *node, RenderOptions options) {
 
 		mesh->user_id = glGenLists(1);
 		glNewList(mesh->user_id, GL_COMPILE_AND_EXECUTE);
-		LOG_GL_ERRORS();
 
 		renderMeshImpl(n, mesh, options);
 
@@ -306,12 +305,12 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 		for(int p = 0; p < mesh->nfaces; ++p) {
 			Lib3dsFace *face = &(mesh->faces[p]);
 			if(face->material != actMaterialIndex) { //material/texture change
-				if(actTexture != NULL)
-					actTexture->unbind();
 				if(began) {
 					glEnd();
 					began = false;
 				}
+				if(actTexture != NULL)
+					actTexture->unbind();
 				actMaterialIndex = face->material;
 				actTexture = NULL;
 
