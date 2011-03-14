@@ -25,7 +25,7 @@ namespace oogl {
 
 class GLSLAttrib {
 public:
-	GLSLAttrib(const GLint id);
+	GLSLAttrib(const std::string name, const GLint id);
 
 	GLSLAttrib& operator=(const int value);
 	GLSLAttrib& operator=(const glm::ivec2 value);
@@ -55,6 +55,7 @@ public:
 
 private:
 	GLint id;
+	std::string name;
 };
 
 class GLSLProgram {

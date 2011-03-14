@@ -97,32 +97,33 @@ GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std:
 
 GLSLAttrib GLSLProgram::operator[](const std::string& arg) {
 	if (locationCache.find(arg) != locationCache.end()) {
-		return locationCache[arg];
+		return GLSLAttrib(arg,locationCache[arg]);
 	}
 	GLint id = glGetUniformLocation(prog, arg.c_str());
 	if (id < 0) {
 		GLint err = glGetError();
 		switch (err) {
 		case 0:
+			LOG_ERROR << arg << ": no error but id " << id << std::endl;
 			break;
 		case GL_INVALID_VALUE:
-			LOG_ERROR << arg.c_str() << ": no such program" << std::endl;
+			LOG_ERROR << arg << ": no such program" << std::endl;
 			break;
 		case GL_INVALID_OPERATION:
-			LOG_ERROR << arg.c_str() << ": invalid operation" << std::endl;
+			LOG_ERROR << arg << ": invalid operation" << std::endl;
 			break;
 		default:
-			LOG_ERROR << arg.c_str() << ": unknown error" << std::endl;
+			LOG_ERROR << arg << ": unknown error" << std::endl;
 			break;
 		}
 	}
 	locationCache[arg] = id;
 
-	return locationCache[arg];
+	return GLSLAttrib(arg, locationCache[arg]);
 }
 
-GLSLAttrib::GLSLAttrib(const GLint id) :
-	id(id) {
+GLSLAttrib::GLSLAttrib(const std::string name, const GLint id) :
+	id(id), name(name) {
 }
 
 #define OPERATOR_EQUAL(TYPE, FUNCTION) \
@@ -131,7 +132,7 @@ GLSLAttrib& GLSLAttrib::operator=(const TYPE value) {\
 		FUNCTION (id, value);\
 		LOG_GL_ERRORS();\
 	} else {\
-		LOG_WARN << "skip setting invalid parameter" << std::endl;\
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;\
 	}\
 	return *this;\
 }
@@ -142,7 +143,7 @@ GLSLAttrib& GLSLAttrib::operator=(const TYPE value) {\
 		FUNCTION (id, SIZE, glm::value_ptr(value));\
 		LOG_GL_ERRORS();\
 	} else {\
-		LOG_WARN << "skip setting invalid parameter" << std::endl;\
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;\
 	}\
 	return *this;\
 }
@@ -172,7 +173,7 @@ GLSLAttrib& GLSLAttrib::operator=(const bool value) {
 		glUniform1i(id, value?1:0);
 		LOG_GL_ERRORS();
 	} else {
-		LOG_WARN << "skip setting invalid parameter" << std::endl;
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;
 	}
 	return *this;
 }
@@ -181,7 +182,7 @@ GLSLAttrib& GLSLAttrib::operator=(const glm::bvec2 value) {
 		glUniform2i(id, value.x?1:0, value.y?1:0 );
 		LOG_GL_ERRORS();
 	} else {
-		LOG_WARN << "skip setting invalid parameter" << std::endl;
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;
 	}
 	return *this;
 }
@@ -190,7 +191,7 @@ GLSLAttrib& GLSLAttrib::operator=(const glm::bvec3 value) {
 		glUniform3i(id, value.x?1:0, value.y?1:0, value.z?1:0);
 		LOG_GL_ERRORS();
 	} else {
-		LOG_WARN << "skip setting invalid parameter" << std::endl;
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;
 	}
 	return *this;
 }
@@ -199,7 +200,7 @@ GLSLAttrib& GLSLAttrib::operator=(const glm::bvec4 value) {
 		glUniform4i(id, value.x?1:0, value.y?1:0, value.z?1:0, value.w?1:0);
 		LOG_GL_ERRORS();
 	} else {
-		LOG_WARN << "skip setting invalid parameter" << std::endl;
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;
 	}
 	return *this;
 }
@@ -210,7 +211,7 @@ GLSLAttrib& GLSLAttrib::operator=(const TYPE value) {\
 		FUNCTION (id, SIZE, false, glm::value_ptr(value));\
 		LOG_GL_ERRORS();\
 	} else {\
-		LOG_WARN << "skip setting invalid parameter" << std::endl;\
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;\
 	}\
 	return *this;\
 }
@@ -228,7 +229,7 @@ GLSLAttrib& GLSLAttrib::operator=(Texture* value) {
 	} else if(!value->isBound()){
 		LOG_ERROR << "texture(" << value->textureId << ") is not bound" << std::endl;
 	} else {
-		LOG_WARN << "skip setting invalid parameter" << std::endl;
+		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;
 	}
 	return *this;
 }

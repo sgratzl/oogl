@@ -33,10 +33,10 @@ namespace model {
 
 class Model3ds : public Model {
 public:
-	Model3ds(std::string fileName);
+	Model3ds(std::string fileName, Model::LoadOptions options);
 	~Model3ds();
 
-	virtual void render();
+	virtual void render(RenderOptions options = RENDER_NORMAL);
 
 private:
 	Lib3dsFile *file;
@@ -44,14 +44,14 @@ private:
 	std::vector<oogl::Texture*> textures;
 
 	void loadFile();
-	void renderNode(Lib3dsNode *node);
-	void renderMeshNode(Lib3dsNode *node);
-	void renderMeshImpl(Lib3dsMesh *mesh);
+	void renderNode(Lib3dsNode *node, RenderOptions options);
+	void renderMeshNode(Lib3dsNode *node, RenderOptions options);
+	void renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, RenderOptions options);
 
 	void dump();
 
 	bool hasSingleMaterial(Lib3dsMesh *mesh);
-	oogl::Texture* applyMaterial(Lib3dsMaterial *material);
+	oogl::Texture* applyMaterial(Lib3dsMaterial *material, RenderOptions options);
 	std::string getDirectory(const std::string& fileName);
 };
 

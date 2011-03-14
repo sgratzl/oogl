@@ -27,10 +27,24 @@ struct BoundingSphere {
 
 class Model {
 public:
-	Model(const std::string fileName);
+	enum RenderOptions {
+		RENDER_NORMAL = 0,
+		RENDER_NO_TEXTURES = 1<<0,
+		RENDER_NO_MATERIALS = 1<<1,
+		RENDER_NO_CULL_FACE = 1<<2,
+		RENDER_NO_DISLAYLIST = 1 << 3
+	};
+
+	enum LoadOptions {
+		LOAD_NORMAL = 0,
+		LOAD_NO_NORMALIZATION = 1 << 0,
+
+	};
+
+	Model(const std::string fileName,Model::LoadOptions options);
 	virtual ~Model();
 
-	virtual void render() = 0;
+	virtual void render(RenderOptions options = RENDER_NORMAL) = 0;
 
 	std::string getFileName() const {
 		return fileName;
@@ -50,9 +64,10 @@ public:
 protected:
 	BoundingBox boundingBox;
 	std::string fileName;
+	LoadOptions loadOptions;
 };
 
-Model* loadModel(const std::string& fileName);
+Model* loadModel(const std::string& fileName, Model::LoadOptions options = Model::LOAD_NORMAL);
 
 }
 
