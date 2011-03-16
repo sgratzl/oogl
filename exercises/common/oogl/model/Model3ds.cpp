@@ -50,6 +50,11 @@ Model3ds::~Model3ds() {
 	textures.clear();
 }
 
+inline bool MaterialComparer(const Lib3dsFace& a, const Lib3dsFace& b) {
+	return a.material < b.material;
+}
+
+
 void Model3ds::loadFile() {
 	LOG_DEBUG << "load 3ds file" << fileName << std::endl;
 	file = lib3ds_file_open(fileName.c_str());
@@ -99,16 +104,9 @@ void Model3ds::loadFile() {
 	}
 
 	//sort faces according to their material index for better rendering
-	struct MaterialComparer {
-		MaterialComparer(Lib3dsMesh *mesh) : mesh(mesh) {}
-		inline bool operator()(const Lib3dsFace& a, const Lib3dsFace& b) {
-			return a.material < b.material;
-		}
-		Lib3dsMesh *mesh;
-	};
 	for(int i = 0; i < file->nmeshes; ++i) {
 		Lib3dsMesh *mesh = file->meshes[i];
-		std::stable_sort(mesh->faces,mesh->faces+(mesh->nfaces),MaterialComparer(mesh));
+		std::stable_sort(mesh->faces+0,mesh->faces+(mesh->nfaces), MaterialComparer);
 	}
 
 	LOG_DEBUG << "loaded " << fileName << std::endl;
