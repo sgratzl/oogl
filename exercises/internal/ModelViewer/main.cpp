@@ -1,7 +1,7 @@
 #include <iostream>
 #include <GLee.h>
 #include <GL/gl.h>		// OpenGL header
-#include <GL/glut.h>	// GLUT header
+#include <GL/freeglut.h>	// GLUT header
 
 #include <utils/loglevels.h>
 #define LOG_LEVEL LOG_LEVEL_DEBUG
@@ -17,6 +17,7 @@ std::auto_ptr<oogl::Model> model;
 bool leftMouseButtonActive = false;
 int mousePosX = 0, mousePosY = 0;
 float rotationX = 0, rotationY = 0;
+float translateZ = -5.f;
 
 void init(std::string filename) {
 	model.reset(oogl::loadModel(filename));
@@ -33,7 +34,7 @@ void display() {
 
 	glLoadIdentity();
 
-	glTranslatef(0,0,-5);
+	glTranslatef(0,0,translateZ);
 
 	glRotatef(rotationX, 0.0f, -1.0f, 0.0f);
 	glRotatef(rotationY, -1.0f, 0.0f, 0.0f);
@@ -78,6 +79,8 @@ void mouse(int button, int state, int x, int y) {
 
 	mousePosX = x;
 	mousePosY = y;
+
+	glutPostRedisplay();
 }
 
 void mouseMotion(int x, int y) {
@@ -88,6 +91,11 @@ void mouseMotion(int x, int y) {
 		mousePosX = x;
 		mousePosY = y;
 	}
+}
+
+void mouseWheel(int wheel, int direction, int x, int y) {
+	translateZ += 1.0f * direction;
+	glutPostRedisplay();
 }
 
 
@@ -106,6 +114,7 @@ int setupGLUT(int argc, char** argv) {
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMotion);
+	glutMouseWheelFunc(mouseWheel);
 
 	return windowId;
 }
