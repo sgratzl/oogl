@@ -32,6 +32,14 @@ function(add_launcher)
 		configure_file(
 			"${CMAKE_SOURCE_DIR}/cmake/start.${IDE_TYPE}.bat"
 			"${CMAKE_BINARY_DIR}/start${CURRENT_NAME}.bat")
+		#generate a .user file to set the working directory
+		if (MSVC AND (MSVC10 OR (MSVC_VERSION EQUAL 1600)))
+			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2010.vcxproj.user.in
+				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcxproj.user @ONLY)
+		else (MSVC AND (MSVC_VERSION EQUAL 1500))
+			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2008.vcproj.user.in
+				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcproj.user @ONLY)
+		endif()
 	elseif(UNIX)
 		string(REPLACE ";" ":" CURRENT_FIXED_BIN_DIRS "${CURRENT_BIN_DIRS}")
 		string(REPLACE ";" ":" CURRENT_FIXED_LIBRARY_DIRS "${CURRENT_LIBRARY_DIRS}")
@@ -40,26 +48,4 @@ function(add_launcher)
 			"${CMAKE_BINARY_DIR}/start${CURRENT_NAME}.sh" IMMEDIATE)
 		exec_program(chmod ARGS 755 "${CMAKE_BINARY_DIR}/start${CURRENT_NAME}.sh")
 	endif()
-	
-	if (MSVC) #generate a .user file to set the working directory
-		if (MSVC_VERSION EQUAL 1600)
-			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2010.vcxproj.user.in
-				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcxproj.user @ONLY)
-		else (MSVC_VERSION EQUAL 1500)
-			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2008.vcproj.user.in
-				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcproj.user @ONLY)
-		endif()
-	endif()
 endfunction(add_launcher)
-
-function(add_project_launcher)
-	if(WIN32 AND MSVC_IDE)
-		if(DEFINED PROJECT_BIN_DIRS)
-			list(REMOVE_DUPLICATES PROJECT_BIN_DIRS)
-		endif()
-		string(REPLACE "/" "\\" PROJECT_FIXED_BIN_DIRS "${PROJECT_BIN_DIRS}")
-		string(REPLACE "/" "\\" PROJECT_FIXED_LIBRARY_DIRS "${PROJECT_LIBRARY_DIRS}")
-		string(REPLACE "/" "\\" CMAKE_FIXED_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-		configure_file("${CMAKE_SOURCE_DIR}/cmake/open.vs.bat" "open${PROJECT_NAME}.bat")
-	endif()
-endfunction(add_project_launcher)
