@@ -26,9 +26,10 @@ rem start cmake
 echo STARTING CMAKE
 cmake -Wno-dev -G "%CMAKE_GENERATOR%" "../"
 if %ERRORLEVEL%==0 (
+	cmake -Wno-dev "../"
 	echo Start solution
 	start %SOLUTION_NAME%.sln
 ) else (
 	echo CMake ist not correctly configured, edit this bat file and specify the correct settings or directly use cmake-gui
-	pause 
+	pause
 )
