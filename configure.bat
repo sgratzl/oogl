@@ -5,8 +5,8 @@ cd "%~dp0"
 rem where is your cmake install, leave empty if its already in the path
 set CMAKE_HOME=
 rem which cmake generator do you want to use?
-rem set CMAKE_GENERATOR=Visual Studio 9 2008
-set CMAKE_GENERATOR=Visual Studio 10
+set CMAKE_GENERATOR=Visual Studio 9 2008
+rem set CMAKE_GENERATOR=Visual Studio 10
 
 rem enhance the path with cmake
 set PATH=%PATH%;%CMAKE_HOME%\bin
