@@ -222,7 +222,9 @@ oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material, RenderOptions o
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glm::value_ptr(ambient));
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glm::value_ptr(diffuse));
+	LOG_DEBUG << "ambient " << ambient << std::endl;
 	LOG_DEBUG << "diffuse " << diffuse << std::endl;
+	LOG_DEBUG << "specular " << specular << std::endl;
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glm::value_ptr(specular));
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
