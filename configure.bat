@@ -26,7 +26,6 @@ rem start cmake
 echo STARTING CMAKE
 cmake -Wno-dev -G "%CMAKE_GENERATOR%" "../"
 if %ERRORLEVEL%==0 (
-	cmake -Wno-dev "../"
 	echo Start solution
 	start %SOLUTION_NAME%.sln
 ) else (

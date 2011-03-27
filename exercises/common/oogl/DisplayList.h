@@ -18,6 +18,7 @@ public:
 	virtual ~DisplayList();
 
 	void begin();
+	void beginAndRender();
 	void end();
 	void render();
 

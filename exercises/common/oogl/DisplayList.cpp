@@ -22,6 +22,10 @@ void DisplayList::begin() {
 	glNewList(id, GL_COMPILE);
 }
 
+void DisplayList::beginAndRender() {
+	glNewList(id, GL_COMPILE_AND_EXECUTE);
+}
+
 void DisplayList::end() {
 	glEndList();
 }

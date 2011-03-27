@@ -132,6 +132,7 @@ void Model3ds::render(RenderOptions options) {
 		currentFrame = 0;
 	lib3ds_file_eval(file, currentFrame); // set current frame
 
+	LOG_GL_ERRORS();
 	glPopAttrib();
 }
 
@@ -271,7 +272,9 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 
 	if(!(loadOptions & LOAD_NO_NORMALIZATION)) {
 		BoundingSphere bsphere = getBoundingSphere();
-		float normalize = 2.f/bsphere.radius;
+		float normalize = 1.f/bsphere.radius;
+		if(loadOptions & LOAD_NORMALIZE_TWO)
+			normalize = normalize * 2;
 		LOG_DEBUG << fileName << " normalize factor " << normalize << std::endl;
 
 		glScalef(normalize,normalize,normalize);

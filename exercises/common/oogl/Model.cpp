@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <oogl/Model.h>
 #include <oogl/model/Model3ds.h>
+#include <oogl/model/ModelObj.h>
 
 #include <utils/log.h>
 
@@ -31,6 +32,9 @@ Model* loadModel(const std::string& fileName, Model::LoadOptions options) {
 	if(ext == "3ds" || ext == "3DS" || ext == "3Ds" || ext == "3dS") {
 		LOG_DEBUG << "loading 3ds model " << fileName << std::endl;
 		return new model::Model3ds(fileName, options);
+	} else if(ext == "obj" || ext == "OBJ" || ext == "OBj" || ext == "ObJ") {
+		LOG_DEBUG << "loading obj model " << fileName << std::endl;
+		return new model::ModelObj(fileName, options);
 	}
 	throw std::runtime_error("unsupported model type: "+fileName);
 }

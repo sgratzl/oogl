@@ -20,8 +20,11 @@ find_internal_package(lib3ds REQUIRED)
 use_package(lib3ds)
 
 find_package(DevIL REQUIRED)
-use_package(DevIL)
 find_binary_dirs(DevIL)
+use_package(DevIL)
+
+find_internal_package(glmobj REQUIRED)
+use_package(glmobj)
 
 create_static_library()
 
@@ -30,5 +33,6 @@ target_use_package(GLM)
 target_use_package(GLee)
 target_use_package(lib3ds)
 target_use_package(DevIL)
+target_use_package(glmobj)
 
 publish_package()

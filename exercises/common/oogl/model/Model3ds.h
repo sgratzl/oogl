@@ -50,7 +50,6 @@ private:
 
 	void dump();
 
-	bool hasSingleMaterial(Lib3dsMesh *mesh);
 	oogl::Texture* applyMaterial(Lib3dsMaterial *material, RenderOptions options);
 	std::string getDirectory(const std::string& fileName);
 };

@@ -38,6 +38,7 @@ public:
 	enum LoadOptions {
 		LOAD_NORMAL = 0,
 		LOAD_NO_NORMALIZATION = 1 << 0,
+		LOAD_NORMALIZE_TWO = 2 << 0,
 
 	};
 

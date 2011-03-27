@@ -8,8 +8,8 @@ group_files()
 include_directories(${CURRENT_INCLUDE_DIRS})
 
 find_package(GLUT REQUIRED)
-use_package(GLUT)
 find_binary_dirs(GLUT)
+use_package(GLUT)
 
 find_internal_package(common)
 use_package(common)
