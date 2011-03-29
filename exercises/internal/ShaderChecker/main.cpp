@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 	case 2: {
 		std::string fragShader = std::string(argv[1]);
 		try {
-			std::auto_ptr<oogl::GLSLShader> s(new oogl::GLSLShader(oogl::GLSLShader::FRAGMENT, fragShader));
+			std::auto_ptr<oogl::GLSLShader> s(oogl::GLSLShader::create(oogl::GLSLShader::FRAGMENT, fragShader));
 			LOG_INFO << fragShader << ": success" << std::endl;
 		} catch (std::exception e) {
 			LOG_ERROR << fragShader << ": error occurred: " << e.what() << std::endl;

@@ -15,7 +15,16 @@
 
 namespace oogl {
 
-GLSLShader::GLSLShader(const ShaderType type, const std::string& filename): type(type), filename(filename) {
+GLSLShader* GLSLShader::create(const ShaderType shaderType, const std::string& filename) {
+	return new GLSLShader(shaderType, filename);
+}
+
+GLuint GLSLShader::load(const ShaderType shaderType, const std::string& filename) {
+	GLSLShader s(shaderType, filename, false);
+	return s.shader;
+}
+
+GLSLShader::GLSLShader(const ShaderType type, const std::string& filename, bool cleanUpOnFree): type(type), filename(filename), cleanUpOnFree(cleanUpOnFree) {
 	shader = glCreateShader(type);
 	if(!shader) {
 		LOG_ERROR << "failed creating shader of type: " << toString(type) << std::endl;
@@ -25,8 +34,10 @@ GLSLShader::GLSLShader(const ShaderType type, const std::string& filename): type
 }
 
 GLSLShader::~GLSLShader() {
-	LOG_DEBUG << "free shader " << filename << std::endl;
-	glDeleteShader(shader);
+	if(cleanUpOnFree) {
+		LOG_DEBUG << "free shader " << filename << std::endl;
+		glDeleteShader(shader);
+	}
 }
 
 const char *GLSLShader::toString(const ShaderType type) const {
@@ -83,6 +94,10 @@ void GLSLShader::loadFromFile(const std::string& filename) {
 	}
 	load(std::string(std::istreambuf_iterator<char>(in),std::istreambuf_iterator<char>()));
 	in.close();
+}
+
+GLuint loadShader(const std::string& filename, GLenum type) {
+	return GLSLShader::load((GLSLShader::ShaderType)type, filename);
 }
 
 }

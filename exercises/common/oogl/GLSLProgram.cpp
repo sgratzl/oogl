@@ -72,8 +72,8 @@ void GLSLProgram::unbind() const {
 }
 
 GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std::string& fragmentShaderFile) {
-	GLSLShader* vertex = new GLSLShader(GLSLShader::VERTEX, vertexShaderFile);
-	GLSLShader* fragment = new GLSLShader(GLSLShader::FRAGMENT, fragmentShaderFile);
+	GLSLShader* vertex = GLSLShader::create(GLSLShader::VERTEX, vertexShaderFile);
+	GLSLShader* fragment = GLSLShader::create(GLSLShader::FRAGMENT, fragmentShaderFile);
 
 	GLSLShaders shaders;
 	shaders.push_back(vertex);
@@ -83,9 +83,9 @@ GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std:
 }
 
 GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std::string& geometryShaderFile, const std::string& fragmentShaderFile) {
-	GLSLShader* vertex = new GLSLShader(GLSLShader::VERTEX, vertexShaderFile);
-	GLSLShader* fragment = new GLSLShader(GLSLShader::FRAGMENT, fragmentShaderFile);
-	GLSLShader* geometry = new GLSLShader(GLSLShader::GEOMETRY, geometryShaderFile);
+	GLSLShader* vertex = GLSLShader::create(GLSLShader::VERTEX, vertexShaderFile);
+	GLSLShader* fragment = GLSLShader::create(GLSLShader::FRAGMENT, fragmentShaderFile);
+	GLSLShader* geometry = GLSLShader::create(GLSLShader::GEOMETRY, geometryShaderFile);
 
 	GLSLShaders shaders;
 	shaders.push_back(vertex);

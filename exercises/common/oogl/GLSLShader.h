@@ -22,7 +22,9 @@ public:
 		GEOMETRY = GL_GEOMETRY_SHADER_EXT
 	};
 
-	GLSLShader(const ShaderType shaderType, const std::string& filename);
+	static GLSLShader* create(const ShaderType shaderType, const std::string& filename);
+	static GLuint load(const ShaderType shaderType, const std::string& filename);
+
 	virtual ~GLSLShader();
 
 	const char *toString(const ShaderType type) const;
@@ -30,12 +32,17 @@ public:
 private:
 	ShaderType type;
 	std::string filename;
+	bool cleanUpOnFree;
 	GLuint shader;
 	friend class GLSLProgram;
 
+	GLSLShader(const ShaderType shaderType, const std::string& filename, bool cleanUpOnFree = true);
+
 	void loadFromFile(const std::string& filename);
-	void load(const std::string& cod);
+	void load(const std::string& code);
 };
+
+GLuint loadShader(const std::string& filename, GLenum type);
 
 }
 
