@@ -8,6 +8,8 @@
 #include <oogl/gl_error.h>
 #include <oogl/model/ModelObj.h>
 
+#include <stdexcept>
+
 #include <glm/glm_ostream.hpp>
 
 #include <utils/log.h>
