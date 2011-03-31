@@ -7,22 +7,13 @@
 
 #include <oogl/Texture.h>
 #include <oogl/gl_error.h>
-#include <IL/il.h>
-#include <IL/ilu.h>
-#include <IL/ilut.h>
+#include <oogl/Image.h>
 
 #include <exception>
 #include <sstream>
 #include <stdexcept>
 
 #include <glm/glm_ostream.hpp>
-
-#define LOG_DEVIL_ERRORS() \
-	{\
-		for(ILenum err = ilGetError(); err != IL_NO_ERROR; err = ilGetError()) { \
-			LOG_ERROR << "DevIL_ERROR: " << iluErrorString(err) << std::endl; \
-		}\
-	}
 
 namespace oogl {
 
@@ -63,41 +54,32 @@ Texture* Texture::createDepth(const glm::uvec2& dim, const GLint format) {
 
 Texture* Texture::loadTexture(const std::string& fileName) {
 	LOG_DEBUG << "load texture: " << fileName << std::endl;
+	std::auto_ptr<oogl::Image> image(oogl::loadImage(fileName));
 
-	static bool ilInitialized = false;
-	if(!ilInitialized) {
-		LOG_DEBUG << "initialize DevIL" << std::endl;
-		ilInit();
-		iluInit();
-		ilutInit();
-		ilutRenderer(ILUT_OPENGL);
-		LOG_DEVIL_ERRORS()
-		ilInitialized = true;
-		LOG_DEBUG << "initialized DevIL" << std::endl;
-	}
+	GLuint textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
 
-	ILuint img;
-	ilGenImages(1, &img);
-	ilBindImage(img);
-	if (!ilLoadImage(fileName.c_str())) {
-		LOG_ERROR << "can't load image: " << fileName << std::endl;
-		LOG_DEVIL_ERRORS()
-		ilDeleteImages(1,&img);
-		throw std::runtime_error("can't load image: "+fileName);
-	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Set texture interpolation method to use linear interpolation (no MIPMAPS)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	GLuint textureId = ilutGLBindTexImage();
-	LOG_GL_ERRORS();
+	glTexImage2D(GL_TEXTURE_2D,
+		0, //mip map level 0..top
+		GL_RGBA, //internal format of the data in memory
+		image->getWidth(),
+		image->getHeight(),
+		0,//border width in pixels (can either be 1 or 0)
+		image->getFormat(),	// Image format (i.e. RGB, RGBA, BGR etc.)
+		image->getType(),// Image data type
+		image->getData());// The actual image data itself
 
-	glm::uvec2 dim(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
-	Texture* tex = new Texture(fileName, glm::uvec2(dim.x,dim.y), textureId, ilGetInteger(IL_IMAGE_FORMAT));
+	Texture* tex = new Texture(fileName, image->getDimensions(), textureId, image->getFormat());
 	tex->unbind();
 
-	ilDeleteImages(1, &img);
-	LOG_DEVIL_ERRORS();
-
-	LOG_DEBUG << "loaded texture: " << fileName << dim << std::endl;
-
+	LOG_DEBUG << "loaded texture: " << fileName << image->getDimensions() << std::endl;
 	return tex;
 }
 
