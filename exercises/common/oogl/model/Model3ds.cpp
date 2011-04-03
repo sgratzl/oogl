@@ -219,14 +219,18 @@ oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material, RenderOptions o
 	glm::vec4 ambient(material->ambient[0],material->ambient[1],material->ambient[2], 1-material->transparency);
 	glm::vec4 diffuse(material->diffuse[0],material->diffuse[1],material->diffuse[2], 1-material->transparency);
 	glm::vec4 specular(material->specular[0],material->specular[1],material->specular[2], 1-material->transparency);
+	glm::vec4 emission(0,0,0, 1-material->transparency);
 	float shininess = glm::clamp(glm::pow(2.f, 10.0f * material->shininess),0.f,128.f);
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glm::value_ptr(ambient));
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glm::value_ptr(diffuse));
-	LOG_DEBUG << "ambient " << ambient << std::endl;
-	LOG_DEBUG << "diffuse " << diffuse << std::endl;
-	LOG_DEBUG << "specular " << specular << std::endl;
+	LOG_DEBUG << "ambient " << ambient << std::endl
+			<< "diffuse " << diffuse << std::endl
+			<< "specular " << specular << std::endl
+			<< "emssision " << specular << std::endl;
+
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glm::value_ptr(specular));
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glm::value_ptr(emission));
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
 	if (!(options & RENDER_NO_TEXTURES) && material->texture1_map.name[0] != '\0') {
