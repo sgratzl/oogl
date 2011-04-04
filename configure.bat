@@ -18,7 +18,9 @@ for %%A in ("%~dp0.") do (
 echo Directory Name: %SOLUTION_NAME%
 
 rem create build dir and delete existing content
-rmdir build
+if exist build (
+	rmdir /s build
+)
 mkdir build
 cd build
 
