@@ -18,6 +18,7 @@ bool leftMouseButtonActive = false;
 int mousePosX = 0, mousePosY = 0;
 float rotationX = 0, rotationY = 0;
 float translateZ = -5.f;
+bool isWireframe = false;
 
 void init(std::string filename) {
 	model.reset(oogl::loadModel(filename));
@@ -65,6 +66,13 @@ void keyboard(unsigned char key, int x, int y) {
 	switch (key) {
 	case 27: //27=esc
 		exit(0);
+		break;
+	case 'w':
+		isWireframe = !isWireframe;
+		if(isWireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		break;
 	}
 	glutPostRedisplay();

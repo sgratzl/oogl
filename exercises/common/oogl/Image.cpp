@@ -10,7 +10,7 @@
 
 #include <IL/il.h>
 #include <IL/ilu.h>
-//#include <IL/ilut.h>
+#include <IL/ilut.h>
 
 #include <utils/log.h>
 
@@ -31,8 +31,9 @@ void Image::initDevIL() {
 	LOG_DEBUG << "initialize DevIL" << std::endl;
 	ilInit();
 	iluInit();
-	//ilutInit();
-	//ilutRenderer(ILUT_OPENGL);
+	ilutInit(); //need to initialize to ensure that the loading of images work as expected
+	ilutRenderer(ILUT_OPENGL);
+
 	LOG_DEVIL_ERRORS()
 	ilInitialized = true;
 	LOG_DEBUG << "initialized DevIL" << std::endl;
