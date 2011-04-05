@@ -34,3 +34,20 @@ function(packageall_exercises)
 	endif()
 endfunction(packageall_exercises)
 
+function(packagehalf_exercises)
+	if(NOT INTERNAL_AVALIABLE)
+		return()
+	endif()
+
+	find_package(ANT)
+
+	if(ANT_FOUND)
+		add_custom_target(packageHalfTimeExercises
+			"${ANT_EXE}" "-buildfile" "assembly.xml" "halftime"
+			WORKING_DIRECTORY "${INTERNAL_DIR}"
+			COMMENT "running ANT" VERBATIM)
+	else()
+		message(WARNING "can't find ANT check your settings otherwise you won't be able to build a package")
+	endif()
+endfunction(packagehalf_exercises)
+
