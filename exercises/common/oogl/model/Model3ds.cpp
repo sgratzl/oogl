@@ -220,15 +220,17 @@ oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material, RenderOptions o
 	glm::vec4 diffuse(material->diffuse[0],material->diffuse[1],material->diffuse[2], 1-material->transparency);
 	glm::vec4 specular(material->specular[0],material->specular[1],material->specular[2], 1-material->transparency);
 	glm::vec4 emission(0,0,0, 1-material->transparency);
-	float shininess = glm::clamp(glm::pow(2.f, 10.0f * material->shininess),0.f,128.f);
+	float shininess = 128*material->shininess; //percentage
+
+	LOG_DEBUG << std::endl
+			<< "ambient " << ambient << std::endl
+			<< "diffuse " << diffuse << std::endl
+			<< "specular " << specular << std::endl
+			<< "emission " << emission << std::endl
+			<< "shininess " << shininess << std::endl;
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, glm::value_ptr(ambient));
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, glm::value_ptr(diffuse));
-	LOG_DEBUG << "ambient " << ambient << std::endl
-			<< "diffuse " << diffuse << std::endl
-			<< "specular " << specular << std::endl
-			<< "emssision " << specular << std::endl;
-
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glm::value_ptr(specular));
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, glm::value_ptr(emission));
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
@@ -294,11 +296,23 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 	if(options & RENDER_NO_MATERIALS) {
 		glBegin( GL_TRIANGLES);
 		{
-			for(int p = 0; p < mesh->nfaces; ++p) {
-				Lib3dsFace *face = &(mesh->faces[p]);
-				for (int i = 0; i < 3; ++i) {
-					glNormal3fv(normalL[3 * p + i]);
-					glVertex3fv(mesh->vertices[face->index[i]]);
+			if(mesh->texcos != NULL) {
+				LOG_WARN << fileName << " have texcoords" << std::endl;
+				for(int p = 0; p < mesh->nfaces; ++p) {
+					Lib3dsFace *face = &(mesh->faces[p]);
+					for (int i = 0; i < 3; ++i) {
+						glNormal3fv(normalL[3 * p + i]);
+						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
+						glVertex3fv(mesh->vertices[face->index[i]]);
+					}
+				}
+			} else {
+				for(int p = 0; p < mesh->nfaces; ++p) {
+					Lib3dsFace *face = &(mesh->faces[p]);
+					for (int i = 0; i < 3; ++i) {
+						glNormal3fv(normalL[3 * p + i]);
+						glVertex3fv(mesh->vertices[face->index[i]]);
+					}
 				}
 			}
 		}
@@ -333,7 +347,7 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 				began = true;
 			}
 			{
-				if(actTexture != NULL) {
+				if(actTexture != NULL && mesh->texcos != NULL) {
 					for (int i = 0; i < 3; ++i) {
 						glNormal3fv(normalL[3 * p + i]);
 						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
