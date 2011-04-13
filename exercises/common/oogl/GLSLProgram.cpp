@@ -140,7 +140,7 @@ GLSLAttrib& GLSLAttrib::operator=(const TYPE value) {\
 #define OPERATOR_EQUAL234(TYPE, FUNCTION, SIZE) \
 GLSLAttrib& GLSLAttrib::operator=(const TYPE value) {\
 	if (id >= 0) {\
-		FUNCTION (id, SIZE, glm::value_ptr(value));\
+		FUNCTION (id, 1, glm::value_ptr(value));\
 		LOG_GL_ERRORS();\
 	} else {\
 		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;\
@@ -208,7 +208,7 @@ GLSLAttrib& GLSLAttrib::operator=(const glm::bvec4 value) {
 #define OPERATOR_EQUAL_MATRIX234(TYPE, FUNCTION, SIZE) \
 GLSLAttrib& GLSLAttrib::operator=(const TYPE value) {\
 	if (id >= 0) {\
-		FUNCTION (id, SIZE, false, glm::value_ptr(value));\
+		FUNCTION (id, 1, false, glm::value_ptr(value));\
 		LOG_GL_ERRORS();\
 	} else {\
 		LOG_WARN << "skip setting invalid parameter: " << name << std::endl;\

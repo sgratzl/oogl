@@ -8,6 +8,8 @@
 #include <oogl/Image.h>
 #include <oogl/gl_error.h>
 
+#include <stdexcept>
+
 #include <IL/il.h>
 #include <IL/ilu.h>
 #include <IL/ilut.h>
