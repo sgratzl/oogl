@@ -29,6 +29,8 @@ public:
 
 	const char *toString(const ShaderType type) const;
 
+	static std::string getInfoLog(GLuint shaderId);
+
 private:
 	ShaderType type;
 	std::string filename;

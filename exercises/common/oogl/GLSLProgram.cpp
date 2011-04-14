@@ -42,22 +42,32 @@ void GLSLProgram::create() {
 	LOG_GL_ERRORS();
 }
 
+
+std::string GLSLProgram::getInfoLog(GLuint programId) {
+	GLint infolen;
+	glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infolen);
+	if(infolen <= 0)
+		return "";
+
+	char *log = new char[infolen];
+	assert(log);
+	glGetProgramInfoLog(programId, infolen, NULL, log);
+	std::string slog(log);
+	delete [] log;
+
+	return slog;
+}
+
 void GLSLProgram::link() {
 	LOG_DEBUG << "linking program" << std::endl;
 	GLint status;
 	glLinkProgram(prog);
 	glGetProgramiv(prog, GL_LINK_STATUS, &status);
-	if (!status) {
-		GLint len;
-		glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &len);
-		char *log = new char[len];
-		glGetProgramInfoLog(prog, len, NULL, log);
 
-		LOG_ERROR << "can't link program: " << log << std::endl;
-		std::ostringstream error_string;
-		error_string << "can't link program: " << log;
-		delete[] log;
-		throw std::runtime_error(error_string.str());
+	if (!status) {
+		std::string log = "can't link program: " + getInfoLog(prog);
+		LOG_ERROR << log << std::endl;
+		throw std::runtime_error(log);
 	} else {
 		LOG_DEBUG << "linked program - no errors" << std::endl;
 	}

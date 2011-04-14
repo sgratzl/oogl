@@ -49,39 +49,39 @@ const char *GLSLShader::toString(const ShaderType type) const {
 	}
 }
 
+std::string GLSLShader::getInfoLog(GLuint shaderId) {
+	GLint infolen;
+	glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &infolen);
+	if(infolen <= 0)
+		return "";
+
+	char *log = new char[infolen];
+	assert(log);
+	glGetShaderInfoLog(shaderId, infolen, NULL, log);
+	std::string slog(log);
+	delete [] log;
+
+	return slog;
+}
+
 void GLSLShader::load(const std::string& code) {
 	GLint status;
 	const GLchar* tmp[2] = {code.c_str(), 0};
 	glShaderSource(shader, 1, tmp, NULL);
 	glCompileShader(shader);
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	std::string log = getInfoLog(shader);
 
 	if(!status) {
-		GLint infolen;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infolen);
-		char *log = new char[infolen];
-		assert(log);
-		glGetShaderInfoLog(shader, infolen, NULL, log);
 		LOG_ERROR << filename << "(" << toString(type) << "): can't compile shader: \n" << log << std::endl;
-		std::string error_str = "can't compile shader: " + std::string(log);
-		delete [] log;
-		throw std::runtime_error(error_str);
+		throw std::runtime_error("can't compile shader: " + log);
 	} else {
 		/* maybe there are warnings? */
-		GLint infolen;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infolen);
-		if(!infolen) {
+		if(log == "" || log == "No errors.") {
 			LOG_DEBUG << filename << "(" << toString(type) << "): compiled shader: -> no warnings" << std::endl;
-			return;
-		}
-		char *log = new char[infolen];
-		assert(log);
-		glGetShaderInfoLog(shader, infolen, NULL, log);
-		std::string logs(log);
-		if(logs != "No errors.") {
+		} else {
 			LOG_WARN << filename << "(" << toString(type) << "): shader warnings:\n" << log << std::endl;
 		}
-		delete [] log;
 	}
 }
 

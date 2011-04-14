@@ -36,7 +36,7 @@ public:
 	Model3ds(std::string fileName, Model::LoadOptions options);
 	~Model3ds();
 
-	virtual void render(RenderOptions options = RENDER_NORMAL);
+	virtual void render(RenderOptions options = 0);
 
 private:
 	Lib3dsFile *file;

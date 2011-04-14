@@ -63,6 +63,8 @@ public:
 	GLSLProgram(std::vector<GLSLShader*> shaders);
 	virtual ~GLSLProgram();
 
+	static std::string getInfoLog(GLuint programId);
+
 	void bind() const;
 	void unbind() const;
 

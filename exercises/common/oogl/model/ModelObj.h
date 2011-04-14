@@ -22,7 +22,7 @@ public:
 	ModelObj(std::string fileName, Model::LoadOptions options);
 	virtual ~ModelObj();
 
-	virtual void render(RenderOptions options = RENDER_NORMAL);
+	virtual void render(RenderOptions options = 0);
 
 private:
 	GLMmodel* model;

@@ -72,7 +72,12 @@ void ModelObj::render(RenderOptions options) {
 	 *             GLM_COLOR    -  render with colors (color material)
 	 *             GLM_MATERIAL -  render with materials
 	 */
-	GLuint glmMode = GLM_SMOOTH;
+	GLuint glmMode = 0;
+
+	GLint shadeModel;
+	glGetIntegerv(GL_SHADE_MODEL,&shadeModel);
+	glmMode = glmMode | (shadeModel == GL_SMOOTH?GLM_SMOOTH:GLM_FLAT);
+
 	if(!(options & RENDER_NO_MATERIALS)) {
 		glmMode = glmMode | GLM_MATERIAL;
 		if(!(options & RENDER_NO_TEXTURES))

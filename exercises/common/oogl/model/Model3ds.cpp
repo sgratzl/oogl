@@ -287,32 +287,35 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 		glTranslatef(-bsphere.center.x,-bsphere.center.y,-bsphere.center.z);
 	}
 
-	//calculate vertex normals
-	float (*normalL)[3] = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
-	lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
+	//calculate vertex or face normals, according to current shade model
+	GLint shadeModel;
+	glGetIntegerv(GL_SHADE_MODEL,&shadeModel);
+	bool shadeSmooth = shadeModel == GL_SMOOTH;
+
+	float (*normalL)[3] = NULL;
+	if(shadeSmooth) {
+		normalL = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
+		lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
+	} else {
+		normalL = (float(*)[3]) malloc(3 * sizeof(float) * mesh->nfaces);
+		lib3ds_mesh_calculate_face_normals(mesh, normalL);
+	}
 
 	oogl::Texture* texture = NULL;
 
 	if(options & RENDER_NO_MATERIALS) {
-		glBegin( GL_TRIANGLES);
+		glBegin(GL_TRIANGLES);
 		{
-			if(mesh->texcos != NULL) {
-				LOG_WARN << fileName << " have texcoords" << std::endl;
-				for(int p = 0; p < mesh->nfaces; ++p) {
-					Lib3dsFace *face = &(mesh->faces[p]);
-					for (int i = 0; i < 3; ++i) {
+			for(int p = 0; p < mesh->nfaces; ++p) {
+				Lib3dsFace *face = &(mesh->faces[p]);
+				if(!shadeSmooth)
+					glNormal3fv(normalL[p]);
+				for (int i = 0; i < 3; ++i) {
+					if(shadeSmooth)
 						glNormal3fv(normalL[3 * p + i]);
+					if(mesh->texcos != NULL)
 						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
-						glVertex3fv(mesh->vertices[face->index[i]]);
-					}
-				}
-			} else {
-				for(int p = 0; p < mesh->nfaces; ++p) {
-					Lib3dsFace *face = &(mesh->faces[p]);
-					for (int i = 0; i < 3; ++i) {
-						glNormal3fv(normalL[3 * p + i]);
-						glVertex3fv(mesh->vertices[face->index[i]]);
-					}
+					glVertex3fv(mesh->vertices[face->index[i]]);
 				}
 			}
 		}
@@ -346,19 +349,14 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 				glBegin( GL_TRIANGLES);
 				began = true;
 			}
-			{
-				if(actTexture != NULL && mesh->texcos != NULL) {
-					for (int i = 0; i < 3; ++i) {
-						glNormal3fv(normalL[3 * p + i]);
-						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
-						glVertex3fv(mesh->vertices[face->index[i]]);
-					}
-				} else {
-					for (int i = 0; i < 3; ++i) {
-						glNormal3fv(normalL[3 * p + i]);
-						glVertex3fv(mesh->vertices[face->index[i]]);
-					}
-				}
+			if(!shadeSmooth)
+				glNormal3fv(normalL[p]);
+			for (int i = 0; i < 3; ++i) {
+				if(shadeSmooth)
+					glNormal3fv(normalL[3 * p + i]);
+				if(mesh->texcos != NULL)
+					glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
+				glVertex3fv(mesh->vertices[face->index[i]]);
 			}
 		}
 		if(began)
