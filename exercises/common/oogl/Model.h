@@ -31,7 +31,8 @@ public:
 		RENDER_NO_TEXTURES = 1<<0,
 		RENDER_NO_MATERIALS = 1<<1,
 		RENDER_NO_CULL_FACE = 1<<2,
-		RENDER_NO_DISLAYLIST = 1 << 3
+		RENDER_NO_DISLAYLIST = 1 << 3,
+		RENDER_VERTEX_NORMALS_SMOOTHING = 1 << 4
 	};
 	typedef unsigned int RenderOptions;
 

@@ -101,6 +101,7 @@ void Texture::bind(glm::uint toTexture) {
 	glBindTexture(GL_TEXTURE_2D, textureId);
 }
 void Texture::unbind() {
+	glActiveTexture(GL_TEXTURE0 + bindedTexture);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	bindedTexture = -1;
 }

@@ -287,10 +287,19 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 		glTranslatef(-bsphere.center.x,-bsphere.center.y,-bsphere.center.z);
 	}
 
+
+	//calculate vertex normals
+	float (*normalL)[3] = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
+	if(options & RENDER_VERTEX_NORMALS_SMOOTHING)
+		lib3ds_mesh_calculate_vertex_normals_clemenshack(mesh, normalL);
+	else
+		lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
+
 	//calculate vertex or face normals, according to current shade model
-	GLint shadeModel;
+	/*GLint shadeModel;
 	glGetIntegerv(GL_SHADE_MODEL,&shadeModel);
 	bool shadeSmooth = shadeModel == GL_SMOOTH;
+	
 
 	float (*normalL)[3] = NULL;
 	if(shadeSmooth) {
@@ -299,7 +308,7 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 	} else {
 		normalL = (float(*)[3]) malloc(3 * sizeof(float) * mesh->nfaces);
 		lib3ds_mesh_calculate_face_normals(mesh, normalL);
-	}
+	}*/
 
 	oogl::Texture* texture = NULL;
 
@@ -308,10 +317,10 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 		{
 			for(int p = 0; p < mesh->nfaces; ++p) {
 				Lib3dsFace *face = &(mesh->faces[p]);
-				if(!shadeSmooth)
-					glNormal3fv(normalL[p]);
+				/*if(!shadeSmooth)
+					glNormal3fv(normalL[p]);*/
 				for (int i = 0; i < 3; ++i) {
-					if(shadeSmooth)
+					//if(shadeSmooth)
 						glNormal3fv(normalL[3 * p + i]);
 					if(mesh->texcos != NULL)
 						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
@@ -349,10 +358,10 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 				glBegin( GL_TRIANGLES);
 				began = true;
 			}
-			if(!shadeSmooth)
-				glNormal3fv(normalL[p]);
+			/*if(!shadeSmooth)
+				glNormal3fv(normalL[p]);*/
 			for (int i = 0; i < 3; ++i) {
-				if(shadeSmooth)
+				//if(shadeSmooth)
 					glNormal3fv(normalL[3 * p + i]);
 				if(mesh->texcos != NULL)
 					glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);

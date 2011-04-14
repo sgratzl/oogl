@@ -645,6 +645,8 @@ extern LIB3DSAPI void lib3ds_mesh_resize_faces(Lib3dsMesh *mesh, int nfaces);
 extern LIB3DSAPI void lib3ds_mesh_bounding_box(Lib3dsMesh *mesh, float bmin[3], float bmax[3]);
 extern LIB3DSAPI void lib3ds_mesh_calculate_face_normals(Lib3dsMesh *mesh, float (*face_normals)[3]);
 extern LIB3DSAPI void lib3ds_mesh_calculate_vertex_normals(Lib3dsMesh *mesh, float (*normals)[3]);
+//added clemens hack
+extern LIB3DSAPI void lib3ds_mesh_calculate_vertex_normals_clemenshack(Lib3dsMesh *mesh, float (*normals)[3]);
 
 extern LIB3DSAPI Lib3dsNode* lib3ds_node_new(Lib3dsNodeType type);
 extern LIB3DSAPI Lib3dsAmbientColorNode* lib3ds_node_new_ambient_color(float color0[3]);

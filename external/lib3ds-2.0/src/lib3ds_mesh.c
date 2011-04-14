@@ -163,7 +163,7 @@ void
 lib3ds_mesh_calculate_vertex_normals(Lib3dsMesh *mesh, float (*normals)[3]) {
     Lib3dsFaces **fl;
     Lib3dsFaces *fa;
-    int i, j;
+    int i, j,t,tj;
 
     if (!mesh->nfaces) {
         return;
@@ -204,7 +204,9 @@ lib3ds_mesh_calculate_vertex_normals(Lib3dsMesh *mesh, float (*normals)[3]) {
 
             assert(mesh->faces[i].index[j] < mesh->nvertices);
 
-            if (f->smoothing_group) {
+            if (f->smoothing_group) 
+			//if (1) 
+			{
                 unsigned smoothing_group = f->smoothing_group;
 
                 lib3ds_vector_zero(n);
@@ -226,6 +228,74 @@ lib3ds_mesh_calculate_vertex_normals(Lib3dsMesh *mesh, float (*normals)[3]) {
 
             lib3ds_vector_normalize(n);
             lib3ds_vector_copy(normals[3*i+j], n);
+        }
+    }
+
+    free(fa);
+    free(fl);
+}
+
+
+//Clemens's "hack" version, with smoothing
+void
+lib3ds_mesh_calculate_vertex_normals_clemenshack(Lib3dsMesh *mesh, float (*normals)[3]) {
+    Lib3dsFaces **fl;
+    Lib3dsFaces *fa;
+    int i, j,t,tj;
+
+    if (!mesh->nfaces) {
+        return;
+    }
+
+    fl = (Lib3dsFaces**)calloc(sizeof(Lib3dsFaces*), mesh->nvertices);
+    fa = (Lib3dsFaces*)malloc(sizeof(Lib3dsFaces) * 3 * mesh->nfaces);
+
+    for (i = 0; i < mesh->nfaces; ++i) {
+        for (j = 0; j < 3; ++j) {
+            Lib3dsFaces* l = &fa[3*i+j];
+            float p[3], q[3], n[3];
+            float len, weight;
+
+            l->index = i;
+            l->next = fl[mesh->faces[i].index[j]];
+            fl[mesh->faces[i].index[j]] = l;
+
+            lib3ds_vector_sub(p, mesh->vertices[mesh->faces[i].index[j<2? j + 1 : 0]], mesh->vertices[mesh->faces[i].index[j]]);
+            lib3ds_vector_sub(q, mesh->vertices[mesh->faces[i].index[j>0? j - 1 : 2]], mesh->vertices[mesh->faces[i].index[j]]);
+            lib3ds_vector_cross(n, p, q);
+            len = lib3ds_vector_length(n);
+            if (len > 0) {       
+                weight = (float)atan2(len, lib3ds_vector_dot(p, q));
+                lib3ds_vector_scalar_mul(l->normal, n, weight / len);
+            } else {
+                lib3ds_vector_zero(l->normal);
+            }
+        }
+    }
+
+    for (i = 0; i < mesh->nfaces; ++i) {
+        Lib3dsFace *f = &mesh->faces[i];
+        for (j = 0; j < 3; ++j) {
+            float n[3];
+            Lib3dsFaces *p;
+            Lib3dsFace *pf;
+
+            assert(mesh->faces[i].index[j] < mesh->nvertices);
+
+            //hack start
+			lib3ds_vector_zero(n);
+			
+			for (t = 0; t < mesh->nfaces; ++t) {
+				 for (tj = 0; tj < 3; ++tj) {
+					if (mesh->faces[t].index[tj] == mesh->faces[i].index[j]) {
+						lib3ds_vector_add(n, n, fa[3*t+tj].normal);
+					}
+				 }
+			}
+            //hack end
+
+            lib3ds_vector_normalize(n);
+			lib3ds_vector_copy(normals[3*i+j], n);
         }
     }
 
