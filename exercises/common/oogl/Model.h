@@ -31,14 +31,14 @@ public:
 		RENDER_NO_TEXTURES = 1<<0,
 		RENDER_NO_MATERIALS = 1<<1,
 		RENDER_NO_CULL_FACE = 1<<2,
-		RENDER_NO_DISLAYLIST = 1 << 3,
-		RENDER_VERTEX_NORMALS_SMOOTHING = 1 << 4
+		RENDER_NO_DISLAYLIST = 1 << 3
 	};
 	typedef unsigned int RenderOptions;
 
 	enum LoadOption {
 		LOAD_NO_NORMALIZATION = 1 << 0,
-		LOAD_NORMALIZE_TWO = 2 << 0
+		LOAD_NORMALIZE_TWO = 1 << 1,
+		LOAD_SET_SMOOTHING_GROUP = 1 << 2
 	};
 	typedef unsigned int LoadOptions;
 

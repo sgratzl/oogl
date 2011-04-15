@@ -109,6 +109,17 @@ void Model3ds::loadFile() {
 		std::stable_sort(mesh->faces+0,mesh->faces+(mesh->nfaces), MaterialComparer);
 	}
 
+	if(loadOptions & LOAD_SET_SMOOTHING_GROUP)
+	{
+		for(int i = 0; i < file->nmeshes; ++i) {
+			Lib3dsMesh *mesh = file->meshes[i];
+			for(int j = 0; j < mesh->nfaces; j++)
+			{
+				mesh->faces[j].smoothing_group = 1;
+			}
+		}
+	}
+
 	LOG_DEBUG << "loaded " << fileName << std::endl;
 }
 
@@ -290,25 +301,7 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 
 	//calculate vertex normals
 	float (*normalL)[3] = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
-	if(options & RENDER_VERTEX_NORMALS_SMOOTHING)
-		lib3ds_mesh_calculate_vertex_normals_clemenshack(mesh, normalL);
-	else
-		lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
-
-	//calculate vertex or face normals, according to current shade model
-	/*GLint shadeModel;
-	glGetIntegerv(GL_SHADE_MODEL,&shadeModel);
-	bool shadeSmooth = shadeModel == GL_SMOOTH;
-	
-
-	float (*normalL)[3] = NULL;
-	if(shadeSmooth) {
-		normalL = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
-		lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
-	} else {
-		normalL = (float(*)[3]) malloc(3 * sizeof(float) * mesh->nfaces);
-		lib3ds_mesh_calculate_face_normals(mesh, normalL);
-	}*/
+	lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
 
 	oogl::Texture* texture = NULL;
 
@@ -317,11 +310,8 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 		{
 			for(int p = 0; p < mesh->nfaces; ++p) {
 				Lib3dsFace *face = &(mesh->faces[p]);
-				/*if(!shadeSmooth)
-					glNormal3fv(normalL[p]);*/
 				for (int i = 0; i < 3; ++i) {
-					//if(shadeSmooth)
-						glNormal3fv(normalL[3 * p + i]);
+					glNormal3fv(normalL[3 * p + i]);
 					if(mesh->texcos != NULL)
 						glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
 					glVertex3fv(mesh->vertices[face->index[i]]);
@@ -358,11 +348,8 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 				glBegin( GL_TRIANGLES);
 				began = true;
 			}
-			/*if(!shadeSmooth)
-				glNormal3fv(normalL[p]);*/
 			for (int i = 0; i < 3; ++i) {
-				//if(shadeSmooth)
-					glNormal3fv(normalL[3 * p + i]);
+				glNormal3fv(normalL[3 * p + i]);
 				if(mesh->texcos != NULL)
 					glTexCoord2f(mesh->texcos[face->index[i]][0], mesh->texcos[face->index[i]][1]);
 				glVertex3fv(mesh->vertices[face->index[i]]);
