@@ -21,7 +21,7 @@ float translateZ = -5.f;
 bool isWireframe = false;
 
 void init(std::string filename) {
-	model.reset(oogl::loadModel(filename));
+	model.reset(oogl::loadModel(filename, oogl::Model::LOAD_SET_SMOOTHING_GROUP));
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);

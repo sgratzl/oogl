@@ -22,14 +22,15 @@ Texture* Texture::createColor(const glm::uvec2& dim, const GLint format) {
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	Texture* tex = new Texture("generated",dim, textureId, format);
+	tex->bind();
+
 	glTexImage2D(GL_TEXTURE_2D, 0, format, dim.x, dim.y, 0 /*no border*/, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	LOG_GL_ERRORS();
 
-	Texture* tex = new Texture("generated",dim, textureId, format);
 	tex->unbind();
 	return tex;
 }
@@ -39,16 +40,16 @@ Texture* Texture::createDepth(const glm::uvec2& dim, const GLint format) {
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	Texture* tex = new Texture("generated",dim, textureId, format);
+	tex->bind();
+
 	glTexImage2D(GL_TEXTURE_2D, 0, format, dim.x, dim.y, 0 /*no border*/, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	//glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	LOG_GL_ERRORS();
-
-	Texture* tex = new Texture("generated",dim, textureId, format);
 	tex->unbind();
+	LOG_GL_ERRORS();
 	return tex;
 }
 
@@ -58,7 +59,8 @@ Texture* Texture::loadTexture(const std::string& fileName) {
 
 	GLuint textureId;
 	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	Texture* tex = new Texture(fileName, image->getDimensions(), textureId, image->getFormat());
+	tex->bind();
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -76,10 +78,10 @@ Texture* Texture::loadTexture(const std::string& fileName) {
 		image->getType(),// Image data type
 		image->getData());// The actual image data itself
 
-	Texture* tex = new Texture(fileName, image->getDimensions(), textureId, image->getFormat());
 	tex->unbind();
 
 	LOG_DEBUG << "loaded texture: " << fileName << image->getDimensions() << std::endl;
+	LOG_GL_ERRORS();
 	return tex;
 }
 
@@ -101,6 +103,8 @@ void Texture::bind(glm::uint toTexture) {
 	glBindTexture(GL_TEXTURE_2D, textureId);
 }
 void Texture::unbind() {
+	if(bindedTexture < 0)
+		return;
 	glActiveTexture(GL_TEXTURE0 + bindedTexture);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	bindedTexture = -1;
