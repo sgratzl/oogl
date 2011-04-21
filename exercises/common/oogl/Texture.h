@@ -22,7 +22,7 @@ namespace oogl {
 class Texture {
 public:
 	static Texture* createColor(const glm::uvec2& dim, const GLint format = GL_RGBA);
-	static Texture* createDepth(const glm::uvec2& dim, const GLint format = GL_DEPTH_COMPONENT24);
+	static Texture* createDepth(const glm::uvec2& dim, const GLint format = GL_DEPTH_COMPONENT);
 	static Texture* loadTexture(const std::string& fileName);
 
 	virtual ~Texture();
@@ -46,6 +46,9 @@ public:
 
 	void bind(glm::uint toTexture = 0);
 	void unbind();
+
+
+	void renderTexturedQuad();
 
 protected:
 	friend class GLSLAttrib;

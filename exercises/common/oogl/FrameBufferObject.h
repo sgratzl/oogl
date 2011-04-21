@@ -44,6 +44,7 @@ private:
 	Texture* depthTexture;
 	GLuint fb, drb;
 
+	void beginCommon();
 	void checkError();
 };
 

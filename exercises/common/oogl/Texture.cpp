@@ -45,11 +45,19 @@ Texture* Texture::createDepth(const glm::uvec2& dim, const GLint format) {
 
 	glTexImage2D(GL_TEXTURE_2D, 0, format, dim.x, dim.y, 0 /*no border*/, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+	LOG_GL_ERRORS();
+
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	//glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+
 	tex->unbind();
-	LOG_GL_ERRORS();
+
 	return tex;
 }
 
@@ -108,6 +116,22 @@ void Texture::unbind() {
 	glActiveTexture(GL_TEXTURE0 + bindedTexture);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	bindedTexture = -1;
+}
+
+void Texture::renderTexturedQuad() {
+	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	const GLfloat c_vertices[]  = {-1,-1, +1,-1, +1,+1, -1,+1};
+	const GLfloat c_texcoords[] = {+0,+0, +1,+0, +1,+1, +0,+1};
+
+	glVertexPointer(2, GL_FLOAT, 0, c_vertices);
+	glTexCoordPointer(2, GL_FLOAT, 0, c_texcoords);
+	glDrawArrays(GL_QUADS, 0, 4);
+
+	glPopClientAttrib();
 }
 
 Texture* loadTexture(const std::string& fileName) {
