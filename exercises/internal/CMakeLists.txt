@@ -1,4 +1,5 @@
 add_subdirectories()
 
-packageall_exercises()
-packagehalf_exercises()
+package_exercise_custom(packageAllExercises complete)
+package_exercise_custom(packageHalfTimeExercises halftime)
+package_exercise_custom(packageex7aBasicsOfAnimation ex7aBasicsOfAnimation)
