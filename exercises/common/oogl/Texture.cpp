@@ -118,8 +118,9 @@ void Texture::unbind() {
 	bindedTexture = -1;
 }
 
-void Texture::renderTexturedQuad() {
+void Texture::render() {
 	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+	bind();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -131,6 +132,7 @@ void Texture::renderTexturedQuad() {
 	glTexCoordPointer(2, GL_FLOAT, 0, c_texcoords);
 	glDrawArrays(GL_QUADS, 0, 4);
 
+	unbind();
 	glPopClientAttrib();
 }
 

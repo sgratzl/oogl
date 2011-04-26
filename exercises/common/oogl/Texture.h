@@ -48,7 +48,7 @@ public:
 	void unbind();
 
 
-	void renderTexturedQuad();
+	void render();
 
 protected:
 	friend class GLSLAttrib;
