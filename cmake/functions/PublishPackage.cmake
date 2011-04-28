@@ -2,6 +2,7 @@ function(publish_package)
 	message(STATUS "caching internal library ${CURRENT_NAME}")
 	set(${CURRENT_NAME}_NAME ${CURRENT_NAME} CACHE STRING "library name" FORCE)
 	set(${CURRENT_NAME}_INCLUDE_DIRS ${CURRENT_INCLUDE_DIRS} CACHE PATH "library include dirs" FORCE)
+	set(${CURRENT_NAME}_DEFINITIONS ${CURRENT_DEFINITIONS} CACHE PATH "compile definitions" FORCE)
 	if(CURRENT_BIN_DIRS)
 		list(REMOVE_DUPLICATES CURRENT_BIN_DIRS)
 	else()
@@ -25,6 +26,7 @@ function(publish_package)
 	mark_as_advanced(
 		${CURRENT_NAME}_NAME
 		${CURRENT_NAME}_INCLUDE_DIRS
+		${CURRENT_NAME}_DEFINITIONS
 		${CURRENT_NAME}_BIN_DIRS
 		${CURRENT_NAME}_LIBRARIES
 		${CURRENT_NAME}_LIBRARY_DIRS)
