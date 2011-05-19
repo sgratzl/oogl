@@ -13,7 +13,7 @@ function(package_exercise_custom NAME TARGET)
 	else()
 		message(WARNING "can't find ANT check your settings otherwise you won't be able to build a package")
 	endif()
-endfunction(package_exercise_)
+endfunction(package_exercise_custom)
 
 function(package_exercise)
 	message(STATUS "adding package target for ${CURRENT_NAME}")
