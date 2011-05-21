@@ -1,0 +1,94 @@
+/*
+ * Texture3D.cpp
+ *
+ *  Created on: 21.05.2011
+ *      Author: sam
+ */
+
+#include <oogl/Texture3D.h>
+#include <oogl/gl_error.h>
+#include <oogl/Image.h>
+
+#include <exception>
+#include <sstream>
+#include <stdexcept>
+
+#include <glm/glm_ostream.hpp>
+
+namespace oogl {
+
+Texture3D* Texture3D::load(const std::string& fileName) {
+	LOG_DEBUG << "load texture: " << fileName << std::endl;
+	std::auto_ptr<oogl::Image> image(oogl::loadImage(fileName));
+
+	if(image->getDepth() <= 1) {
+		LOG_ERROR << "can only handle 3D Images, but " << fileName << " has a depth of " << image->getDepth() << std::endl;
+		return NULL;
+	}
+
+	GLuint textureId;
+	glGenTextures(1, &textureId);
+	Texture3D* tex = new Texture3D(fileName, image->getDimensions(), textureId, image->getFormat());
+	tex->bind();
+
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	// Set texture interpolation method to use linear interpolation (no MIPMAPS)
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexImage3D(GL_TEXTURE_3D,
+		0, //mip map level 0..top
+		GL_RGBA, //internal format of the data in memory
+		image->getWidth(),
+		image->getHeight(),
+		image->getDepth(),
+		0,//border width in pixels (can either be 1 or 0)
+		image->getFormat(),	// Image format (i.e. RGB, RGBA, BGR etc.)
+		image->getType(),// Image data type
+		image->getData());// The actual image data itself
+
+	tex->unbind();
+
+	LOG_DEBUG << "loaded texture: " << fileName << image->getDimensions() << std::endl;
+	LOG_GL_ERRORS();
+	return tex;
+}
+
+Texture3D::Texture3D(const std::string& name, const glm::uvec3& dim, const GLuint textureId, GLint format) :
+	name(name), width(dim.x), height(dim.y), depth(dim.z), textureId(textureId), format(format), bindedTexture(-1) {
+
+}
+
+Texture3D::~Texture3D() {
+	LOG_DEBUG << "free texture " << name << std::endl;
+	if (textureId)
+		glDeleteTextures(1, &textureId);
+}
+
+void Texture3D::bind(glm::uint toTexture) {
+	if(toTexture >= GL_TEXTURE0)
+		toTexture -= GL_TEXTURE0;
+	bindedTexture = toTexture;
+	//glEnable(GL_TEXTURE_3D);
+	glActiveTexture(GL_TEXTURE0 + toTexture);
+	glBindTexture(GL_TEXTURE_3D, textureId);
+}
+void Texture3D::unbind() {
+	if(bindedTexture < 0)
+		return;
+	glActiveTexture(GL_TEXTURE0 + bindedTexture);
+	glBindTexture(GL_TEXTURE_3D, GL_NONE);
+	bindedTexture = -1;
+}
+
+void Texture3D::render() {
+	//TODO
+}
+
+Texture3D* loadTexture3D(const std::string& fileName) {
+	return Texture3D::load(fileName);
+}
+
+}

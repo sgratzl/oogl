@@ -83,6 +83,11 @@ glm::uint Image::getHeight() {
 	return ilGetInteger(IL_IMAGE_HEIGHT);
 }
 
+glm::uint Image::getDepth() {
+	ilBindImage(img);
+	return ilGetInteger(IL_IMAGE_DEPTH);
+}
+
 unsigned char* Image::getData() {
 	ilBindImage(img);
 	return ilGetData();
@@ -102,8 +107,6 @@ int Image::getType() {
 	ilBindImage(img);
 	return ilGetInteger(IL_IMAGE_TYPE);
 }
-
-
 
 Image* loadImage(const std::string &fileName) {
 	return Image::load(fileName);

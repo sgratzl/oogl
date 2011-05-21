@@ -53,6 +53,32 @@ public:
 
 	GLSLAttrib& operator=(Texture* value);
 
+	void set(const int value);
+	void set(const glm::ivec2 value);
+	void set(const glm::ivec3 value);
+	void set(const glm::ivec4 value);
+
+	void set(const glm::uint value);
+	void set(const glm::uvec2 value);
+	void set(const glm::uvec3 value);
+	void set(const glm::uvec4 value);
+
+	void set(const float value);
+	void set(const glm::vec2 value);
+	void set(const glm::vec3 value);
+	void set(const glm::vec4 value);
+
+	void set(const bool value);
+	void set(const glm::bvec2 value);
+	void set(const glm::bvec3 value);
+	void set(const glm::bvec4 value);
+
+	void set(const glm::mat2 value);
+	void set(const glm::mat3 value);
+	void set(const glm::mat4 value);
+
+	void set(Texture* value);
+
 private:
 	GLint id;
 	std::string name;

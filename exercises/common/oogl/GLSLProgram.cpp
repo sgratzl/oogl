@@ -244,4 +244,38 @@ GLSLAttrib& GLSLAttrib::operator=(Texture* value) {
 	return *this;
 }
 
+#define GENERIC_SET(TYPE)\
+	void GLSLAttrib::set(const TYPE value) {\
+		(*this) = value; \
+	}
+
+GENERIC_SET(int)
+GENERIC_SET(glm::ivec2)
+GENERIC_SET(glm::ivec3)
+GENERIC_SET(glm::ivec4)
+
+GENERIC_SET(glm::uint)
+GENERIC_SET(glm::uvec2)
+GENERIC_SET(glm::uvec3)
+GENERIC_SET(glm::uvec4)
+
+GENERIC_SET(float)
+GENERIC_SET(glm::vec2)
+GENERIC_SET(glm::vec3)
+GENERIC_SET(glm::vec4)
+
+GENERIC_SET(bool)
+GENERIC_SET(glm::bvec2)
+GENERIC_SET(glm::bvec3)
+GENERIC_SET(glm::bvec4)
+
+GENERIC_SET(glm::mat2)
+GENERIC_SET(glm::mat3)
+GENERIC_SET(glm::mat4)
+
+void GLSLAttrib::set(Texture* value) {\
+	(*this) = value; \
+}
+
+#undef GENERIC_SET
 }

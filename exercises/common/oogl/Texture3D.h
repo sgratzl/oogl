@@ -1,12 +1,12 @@
 /*
- * Texture.h
+ * Texture3D.h
  *
- *  Created on: 12.07.2010
+ *  Created on: 21.05.2011
  *      Author: sam
  */
 
-#ifndef TEXTURE_H_
-#define TEXTURE_H_
+#ifndef TEXTURE3D_H_
+#define TEXTURE3D_H_
 
 #include <utils/log.h>
 
@@ -16,16 +16,13 @@
 #include <oogl/glIncludes.h>
 #include <glm/glm.hpp>
 
-
 namespace oogl {
 
-class Texture {
+class Texture3D {
 public:
-	static Texture* createColor(const glm::uvec2& dim, const GLint format = GL_RGBA);
-	static Texture* createDepth(const glm::uvec2& dim, const GLint format = GL_DEPTH_COMPONENT);
-	static Texture* load(const std::string& fileName);
+	static Texture3D* load(const std::string& fileName);
 
-	virtual ~Texture();
+	virtual ~Texture3D();
 
 	glm::uint getWidth() {
 		return width;
@@ -33,11 +30,15 @@ public:
 	glm::uint getHeight() {
 		return height;
 	}
+	glm::uint getDepth() {
+		return depth;
+	}
+
 	GLint getFormat() {
 		return format;
 	}
-	glm::uvec2 getDimensions() {
-		return glm::uvec2(width, height);
+	glm::uvec3 getDimensions() {
+		return glm::uvec3(width, height, depth);
 	}
 
 	std::string getName() const {
@@ -47,14 +48,14 @@ public:
 	void bind(glm::uint toTexture = 0);
 	void unbind();
 
-
 	void render();
+
 
 protected:
 	friend class GLSLAttrib;
 	friend class FrameBufferObject;
 
-	Texture(const std::string& name, const glm::uvec2& dim, const GLuint textureId, GLint format);
+	Texture3D(const std::string& name, const glm::uvec3& dim, const GLuint textureId, GLint format);
 
 	bool isBound() const {
 		return bindedTexture >= 0;
@@ -62,12 +63,13 @@ protected:
 private:
 	std::string name;
 	GLuint textureId;
-	glm::uint width, height;
+	glm::uint width, height, depth;
 	GLint format;
 	int bindedTexture;
 };
 
-Texture* loadTexture(const std::string& fileName);
+Texture3D* loadTexture3D(const std::string& fileName);
 
 }
-#endif /* TEXTURE_H_ */
+
+#endif /* TEXTURE3D_H_ */

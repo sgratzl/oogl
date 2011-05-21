@@ -22,26 +22,25 @@ public:
 
 	glm::uint getWidth();
 	glm::uint getHeight();
+	glm::uint getDepth();
 
 	int getFormat();
 	int getType();
 	int getBytesPerPixel();
 
-	glm::uvec2 getDimensions() {
-		return glm::uvec2(getWidth(), getHeight());
+	glm::uvec3 getDimensions() {
+		return glm::uvec3(getWidth(), getHeight(), getDepth());
 	}
 
 	unsigned char* getData();
 
-private:
+protected:
 	std::string fileName;
 	unsigned int img;
 
 	Image(const std::string& fileName, unsigned int img);
 
 	static void initDevIL();
-
-
 };
 
 Image* loadImage(const std::string &fileName);

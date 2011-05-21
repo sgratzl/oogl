@@ -27,12 +27,11 @@ public:
 
 	virtual ~FrameBufferObject();
 
-	void begin(int target =0);
-	void beginDepth();
+	void begin(unsigned int target =0);
 	void beginAll();
 	void end();
 
-	Texture* getTexture(int target = 0) { return textures[target]; }
+	Texture* getTexture(unsigned int target = 0) { return textures[target]; }
 	Texture* getDepthTexture() { return depthTexture; };
 
 protected:
@@ -42,7 +41,7 @@ private:
 	glm::uvec2 dim;
 	std::vector<Texture*> textures;
 	Texture* depthTexture;
-	GLuint fb, drb;
+	GLuint fb;
 
 	void beginCommon();
 	void checkError();
