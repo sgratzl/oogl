@@ -32,6 +32,10 @@ public:
 		return glm::uvec3(getWidth(), getHeight(), getDepth());
 	}
 
+	std::string getName() {
+		return fileName;
+	}
+
 	unsigned char* getData();
 
 protected:

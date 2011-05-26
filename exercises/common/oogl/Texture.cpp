@@ -6,6 +6,8 @@
  */
 
 #include <oogl/Texture.h>
+#include <oogl/Texture2D.h>
+#include <oogl/Texture3D.h>
 #include <oogl/gl_error.h>
 #include <oogl/Image.h>
 
@@ -17,94 +19,8 @@
 
 namespace oogl {
 
-Texture* Texture::createColor(const glm::uvec2& dim, const GLint format) {
-	LOG_DEBUG << "create color texture: " << dim << std::endl;
-	GLuint textureId;
-	glGenTextures(1, &textureId);
-
-	Texture* tex = new Texture("generated",dim, textureId, format);
-	tex->bind();
-
-	glTexImage2D(GL_TEXTURE_2D, 0, format, dim.x, dim.y, 0 /*no border*/, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-
-	LOG_GL_ERRORS();
-
-	tex->unbind();
-	return tex;
-}
-
-Texture* Texture::createDepth(const glm::uvec2& dim, const GLint format) {
-	LOG_DEBUG << "create depth texture: " << dim << std::endl;
-	GLuint textureId;
-	glGenTextures(1, &textureId);
-
-	Texture* tex = new Texture("generated",dim, textureId, format);
-	tex->bind();
-
-	glTexImage2D(GL_TEXTURE_2D, 0, format, dim.x, dim.y, 0 /*no border*/, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
-
-	LOG_GL_ERRORS();
-	tex->unbind();
-
-	return tex;
-}
-
-Texture* Texture::load(const std::string& fileName) {
-	LOG_DEBUG << "load texture: " << fileName << std::endl;
-	std::auto_ptr<oogl::Image> image(oogl::loadImage(fileName));
-
-	if(image->getDepth() > 1) {
-		LOG_ERROR << "can only handle 2D Images, but " << fileName << " has a depth of " << image->getDepth() << std::endl;
-		return NULL;
-	}
-
-	GLuint textureId;
-	glGenTextures(1, &textureId);
-	Texture* tex = new Texture(fileName, glm::uvec2(image->getWidth(), image->getHeight()), textureId, image->getFormat());
-	tex->bind();
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// Set texture interpolation method to use linear interpolation (no MIPMAPS)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D,
-		0, //mip map level 0..top
-		GL_RGBA, //internal format of the data in memory
-		image->getWidth(),
-		image->getHeight(),
-		0,//border width in pixels (can either be 1 or 0)
-		image->getFormat(),	// Image format (i.e. RGB, RGBA, BGR etc.)
-		image->getType(),// Image data type
-		image->getData());// The actual image data itself
-
-	tex->unbind();
-
-	LOG_DEBUG << "loaded texture: " << fileName << image->getDimensions() << std::endl;
-	LOG_GL_ERRORS();
-	return tex;
-}
-
-Texture::Texture(const std::string& name, const glm::uvec2& dim, const GLuint textureId, GLint format) :
-	name(name), width(dim.x), height(dim.y), textureId(textureId), format(format), bindedTexture(-1) {
+Texture::Texture(const std::string& name, const GLuint textureId, GLint format, GLenum textureType) :
+	name(name), textureId(textureId), format(format), textureType(textureType), bindedTexture(-1) {
 
 }
 
@@ -118,40 +34,31 @@ void Texture::bind(glm::uint toTexture) {
 	if(toTexture >= GL_TEXTURE0)
 		toTexture -= GL_TEXTURE0;
 	bindedTexture = toTexture;
-	//glEnable(GL_TEXTURE_2D);
+	//glEnable(textureType);
 	glActiveTexture(GL_TEXTURE0 + toTexture);
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	glBindTexture(textureType, textureId);
 }
+
 void Texture::unbind() {
 	if(bindedTexture < 0)
 		return;
 	glActiveTexture(GL_TEXTURE0 + bindedTexture);
-	glBindTexture(GL_TEXTURE_2D, GL_NONE);
+	glBindTexture(textureType, GL_NONE);
 	bindedTexture = -1;
 }
 
-void Texture::render() {
-	glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_LIGHTING_BIT);
-	glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
-	bind();
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	const GLfloat c_vertices[]  = {-1,-1, +1,-1, +1,+1, -1,+1};
-	const GLfloat c_texcoords[] = {+0,+0, +1,+0, +1,+1, +0,+1};
-
-	glVertexPointer(2, GL_FLOAT, 0, c_vertices);
-	glTexCoordPointer(2, GL_FLOAT, 0, c_texcoords);
-	glDrawArrays(GL_QUADS, 0, 4);
-
-	unbind();
-	glPopClientAttrib();
-	glPopAttrib();
-}
-
 Texture* loadTexture(const std::string& fileName) {
-	return Texture::load(fileName);
+	LOG_DEBUG << "load texture: " << fileName << std::endl;
+	Image *image = oogl::loadImage(fileName);
+
+	Texture* tex = NULL;
+	if(image->getDepth() <= 1)
+		tex = Texture2D::load(image);
+	else
+		tex = Texture3D::load(image);
+
+	delete image;
+	return tex;
 }
 
 }

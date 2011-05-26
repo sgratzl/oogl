@@ -16,14 +16,14 @@ namespace oogl {
 FrameBufferObject* FrameBufferObject::create(glm::uvec2 dim, const unsigned textureCount, const GLint textureFormat, const GLint depthFormat) {
 	assert(textureCount <= 16);
 
-	std::vector<Texture*> textures;
+	std::vector<Texture2D*> textures;
 	for(unsigned i = 0; i< textureCount; ++i) {
-		textures.push_back(Texture::createColor(dim, textureFormat));
+		textures.push_back(Texture2D::createColor(dim, textureFormat));
 	}
 
-	Texture* depthTexture = NULL;
+	Texture2D* depthTexture = NULL;
 	if(depthFormat > 0) {
-		depthTexture = Texture::createDepth(dim, depthFormat);
+		depthTexture = Texture2D::createDepth(dim, depthFormat);
 	}
 
 	return new FrameBufferObject(dim, textures, depthTexture);
@@ -33,7 +33,7 @@ FrameBufferObject* FrameBufferObject::createDepthOnly(glm::uvec2 dim, const GLin
 	return create(dim, 0, 0, depthFormat);
 }
 
-FrameBufferObject::FrameBufferObject(glm::uvec2 dim, const std::vector<Texture*>& textures, Texture* depthTexture) :
+FrameBufferObject::FrameBufferObject(glm::uvec2 dim, const std::vector<Texture2D*>& textures, Texture2D* depthTexture) :
 	dim(dim), textures(textures), depthTexture(depthTexture) {
 	LOG_INFO << "create fbo: " << dim.x << " " << dim.y << std::endl;
 
@@ -46,7 +46,7 @@ FrameBufferObject::FrameBufferObject(glm::uvec2 dim, const std::vector<Texture*>
 	// attach
 	assert(textures.size() <= 15);
 	for (unsigned i = 0; i < textures.size(); ++i) {
-		Texture* tex = textures[i];
+		Texture2D* tex = textures[i];
 		assert (dim.x == tex->getWidth() && dim.y == tex->getHeight());
 		LOG_DEBUG << "attach color texture " << i << std::endl;
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+i, GL_TEXTURE_2D, tex->textureId, 0);
@@ -109,7 +109,7 @@ void FrameBufferObject::checkError() {
 FrameBufferObject::~FrameBufferObject() {
 	glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 
-	for(std::vector<Texture*>::iterator it = textures.begin(); it != textures.end(); ++it)
+	for(std::vector<Texture2D*>::iterator it = textures.begin(); it != textures.end(); ++it)
 		delete *it;
 	textures.clear();
 

@@ -21,40 +21,26 @@ namespace oogl {
 
 class Texture {
 public:
-	static Texture* createColor(const glm::uvec2& dim, const GLint format = GL_RGBA);
-	static Texture* createDepth(const glm::uvec2& dim, const GLint format = GL_DEPTH_COMPONENT);
-	static Texture* load(const std::string& fileName);
-
 	virtual ~Texture();
 
-	glm::uint getWidth() {
-		return width;
-	}
-	glm::uint getHeight() {
-		return height;
-	}
 	GLint getFormat() {
 		return format;
-	}
-	glm::uvec2 getDimensions() {
-		return glm::uvec2(width, height);
 	}
 
 	std::string getName() const {
 		return name;
 	}
 
-	void bind(glm::uint toTexture = 0);
-	void unbind();
+	virtual void bind(glm::uint toTexture = 0);
+	virtual void unbind();
 
-
-	void render();
+	virtual void render() = 0;
 
 protected:
 	friend class GLSLAttrib;
 	friend class FrameBufferObject;
 
-	Texture(const std::string& name, const glm::uvec2& dim, const GLuint textureId, GLint format);
+	Texture(const std::string& name, const GLuint textureId, GLint format, GLenum textureType);
 
 	bool isBound() const {
 		return bindedTexture >= 0;
@@ -62,8 +48,8 @@ protected:
 private:
 	std::string name;
 	GLuint textureId;
-	glm::uint width, height;
 	GLint format;
+	GLenum textureType;
 	int bindedTexture;
 };
 

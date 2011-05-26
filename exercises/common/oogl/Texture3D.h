@@ -8,67 +8,41 @@
 #ifndef TEXTURE3D_H_
 #define TEXTURE3D_H_
 
-#include <utils/log.h>
-
-#include <utility>
-#include <memory>
-
-#include <oogl/glIncludes.h>
-#include <glm/glm.hpp>
+#include <oogl/Texture.h>
+#include <oogl/Image.h>
 
 namespace oogl {
 
-class Texture3D {
+class Texture3D: public Texture {
 public:
-	static Texture3D* load(const std::string& fileName);
+	static Texture3D* load(Image *image);
 
 	virtual ~Texture3D();
 
 	glm::uint getWidth() {
-		return width;
+		return dim.x;
 	}
+
 	glm::uint getHeight() {
-		return height;
+		return dim.y;
 	}
+
 	glm::uint getDepth() {
-		return depth;
+		return dim.z;
 	}
 
-	GLint getFormat() {
-		return format;
-	}
 	glm::uvec3 getDimensions() {
-		return glm::uvec3(width, height, depth);
+		return dim;
 	}
-
-	std::string getName() const {
-		return name;
-	}
-
-	void bind(glm::uint toTexture = 0);
-	void unbind();
 
 	void render();
 
-
 protected:
-	friend class GLSLAttrib;
-	friend class FrameBufferObject;
-
 	Texture3D(const std::string& name, const glm::uvec3& dim, const GLuint textureId, GLint format);
 
-	bool isBound() const {
-		return bindedTexture >= 0;
-	}
 private:
-	std::string name;
-	GLuint textureId;
-	glm::uint width, height, depth;
-	GLint format;
-	int bindedTexture;
+	glm::uvec3 dim;
 };
-
-Texture3D* loadTexture3D(const std::string& fileName);
 
 }
 

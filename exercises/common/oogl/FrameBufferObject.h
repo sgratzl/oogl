@@ -11,7 +11,7 @@
 
 #include <oogl/glIncludes.h>
 
-#include <oogl/Texture.h>
+#include <oogl/Texture2D.h>
 #include <utils/log.h>
 
 #include <vector>
@@ -31,16 +31,16 @@ public:
 	void beginAll();
 	void end();
 
-	Texture* getTexture(unsigned int target = 0) { return textures[target]; }
-	Texture* getDepthTexture() { return depthTexture; };
+	Texture2D* getTexture(unsigned int target = 0) { return textures[target]; }
+	Texture2D* getDepthTexture() { return depthTexture; };
 
 protected:
-	FrameBufferObject(glm::uvec2 dim, const std::vector<Texture*>& textures, Texture* depthTexture);
+	FrameBufferObject(glm::uvec2 dim, const std::vector<Texture2D*>& textures, Texture2D* depthTexture);
 
 private:
 	glm::uvec2 dim;
-	std::vector<Texture*> textures;
-	Texture* depthTexture;
+	std::vector<Texture2D*> textures;
+	Texture2D* depthTexture;
 	GLuint fb;
 
 	void beginCommon();

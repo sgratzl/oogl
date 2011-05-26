@@ -17,18 +17,15 @@
 
 namespace oogl {
 
-Texture3D* Texture3D::load(const std::string& fileName) {
-	LOG_DEBUG << "load texture: " << fileName << std::endl;
-	std::auto_ptr<oogl::Image> image(oogl::loadImage(fileName));
-
+Texture3D* Texture3D::load(Image* image) {
 	if(image->getDepth() <= 1) {
-		LOG_ERROR << "can only handle 3D Images, but " << fileName << " has a depth of " << image->getDepth() << std::endl;
+		LOG_ERROR << "can only handle 3D Images, but " << image->getName() << " has a depth of " << image->getDepth() << std::endl;
 		return NULL;
 	}
 
 	GLuint textureId;
 	glGenTextures(1, &textureId);
-	Texture3D* tex = new Texture3D(fileName, image->getDimensions(), textureId, image->getFormat());
+	Texture3D* tex = new Texture3D(image->getName(), image->getDimensions(), textureId, image->getFormat());
 	tex->bind();
 
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -51,44 +48,21 @@ Texture3D* Texture3D::load(const std::string& fileName) {
 
 	tex->unbind();
 
-	LOG_DEBUG << "loaded texture: " << fileName << image->getDimensions() << std::endl;
+	LOG_DEBUG << "loaded texture: " << image->getName() << image->getDimensions() << std::endl;
 	LOG_GL_ERRORS();
 	return tex;
 }
 
 Texture3D::Texture3D(const std::string& name, const glm::uvec3& dim, const GLuint textureId, GLint format) :
-	name(name), width(dim.x), height(dim.y), depth(dim.z), textureId(textureId), format(format), bindedTexture(-1) {
-
+	Texture(name, textureId, format, GL_TEXTURE_3D), dim(dim) {
 }
 
 Texture3D::~Texture3D() {
-	LOG_DEBUG << "free texture " << name << std::endl;
-	if (textureId)
-		glDeleteTextures(1, &textureId);
-}
 
-void Texture3D::bind(glm::uint toTexture) {
-	if(toTexture >= GL_TEXTURE0)
-		toTexture -= GL_TEXTURE0;
-	bindedTexture = toTexture;
-	//glEnable(GL_TEXTURE_3D);
-	glActiveTexture(GL_TEXTURE0 + toTexture);
-	glBindTexture(GL_TEXTURE_3D, textureId);
-}
-void Texture3D::unbind() {
-	if(bindedTexture < 0)
-		return;
-	glActiveTexture(GL_TEXTURE0 + bindedTexture);
-	glBindTexture(GL_TEXTURE_3D, GL_NONE);
-	bindedTexture = -1;
 }
 
 void Texture3D::render() {
 	//TODO
-}
-
-Texture3D* loadTexture3D(const std::string& fileName) {
-	return Texture3D::load(fileName);
 }
 
 }
