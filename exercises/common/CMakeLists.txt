@@ -8,7 +8,7 @@ group_files()
 include_directories(${CURRENT_INCLUDE_DIRS})
 
 find_package(OpenGL)
-use_package(OpenGL)
+use_package(OPENGL)
 
 find_package(GLM REQUIRED)
 use_package(GLM)
@@ -28,7 +28,7 @@ use_package(glmobj)
 
 create_static_library()
 
-target_use_package(OpenGL)
+target_use_package(OPENGL)
 target_use_package(GLM)
 target_use_package(GLee)
 target_use_package(lib3ds)

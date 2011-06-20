@@ -7,10 +7,10 @@ set(CURRENT_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories(${CURRENT_INCLUDE_DIRS})
 
 find_package(OpenGL)
-use_package(OpenGL)
+use_package(OPENGL)
 
 create_static_library()
 
-target_use_package(OpenGL)
+target_use_package(OPENGL)
 
 publish_package()

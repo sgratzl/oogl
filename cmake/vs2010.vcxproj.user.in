@@ -3,25 +3,25 @@
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 	<LocalDebuggerWorkingDirectory>@CMAKE_CURRENT_SOURCE_DIR@</LocalDebuggerWorkingDirectory>
 	<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-	<LocalDebuggerCommandArguments></LocalDebuggerCommandArguments>
+	<LocalDebuggerCommandArguments>@LAUNCHER_ARGS@</LocalDebuggerCommandArguments>
 	<LocalDebuggerEnvironment>PATH=@CURRENT_FIXED_BIN_DIRS@</LocalDebuggerEnvironment>
 </PropertyGroup>
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
 	<LocalDebuggerWorkingDirectory>@CMAKE_CURRENT_SOURCE_DIR@</LocalDebuggerWorkingDirectory>
 	<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-	<LocalDebuggerCommandArguments></LocalDebuggerCommandArguments>
+	<LocalDebuggerCommandArguments>@LAUNCHER_ARGS@</LocalDebuggerCommandArguments>
 	<LocalDebuggerEnvironment>PATH=@CURRENT_FIXED_BIN_DIRS@</LocalDebuggerEnvironment>
 </PropertyGroup>
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
 	<LocalDebuggerWorkingDirectory>@CMAKE_CURRENT_SOURCE_DIR@</LocalDebuggerWorkingDirectory>
 	<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-	<LocalDebuggerCommandArguments></LocalDebuggerCommandArguments>
+	<LocalDebuggerCommandArguments>@LAUNCHER_ARGS@</LocalDebuggerCommandArguments>
 	<LocalDebuggerEnvironment>PATH=@CURRENT_FIXED_BIN_DIRS@</LocalDebuggerEnvironment>
 </PropertyGroup>
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
 <LocalDebuggerWorkingDirectory>@CMAKE_CURRENT_SOURCE_DIR@</LocalDebuggerWorkingDirectory>
 	<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-	<LocalDebuggerCommandArguments></LocalDebuggerCommandArguments>
+	<LocalDebuggerCommandArguments>@LAUNCHER_ARGS@</LocalDebuggerCommandArguments>
 	<LocalDebuggerEnvironment>PATH=@CURRENT_FIXED_BIN_DIRS@</LocalDebuggerEnvironment>
 </PropertyGroup>
 </Project>

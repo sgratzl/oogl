@@ -10,7 +10,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory="@CMAKE_CURRENT_SOURCE_DIR@"
-				CommandArguments=""
+				CommandArguments="@LAUNCHER_ARGS@"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
@@ -38,7 +38,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory="@CMAKE_CURRENT_SOURCE_DIR@"
-				CommandArguments=""
+				CommandArguments="@LAUNCHER_ARGS@"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
@@ -66,7 +66,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory="@CMAKE_CURRENT_SOURCE_DIR@"
-				CommandArguments=""
+				CommandArguments="@LAUNCHER_ARGS@"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
@@ -94,7 +94,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory="@CMAKE_CURRENT_SOURCE_DIR@"
-				CommandArguments=""
+				CommandArguments="@LAUNCHER_ARGS@"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
