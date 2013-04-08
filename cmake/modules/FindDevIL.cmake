@@ -27,11 +27,20 @@
 
 include(FindPackageHandleStandardArgs)
 
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+   # 64-bit project
+   set(IL_BUILD_TYPE_ARCH 64)
+else()
+   # 32-bit project
+   set(IL_BUILD_TYPE_ARCH 32)
+endif()
+
 FIND_PATH(IL_INCLUDE_DIR IL/il.h
-	PATH_SUFFIXES include
+	PATH_SUFFIXES include${IL_BUILD_TYPE_ARCH} include
 	DOC "The path the the directory that contains il.h"
 	HINTS
 		${DEVIL_ROOT}
+		${DEVIL_ROOT}/include${IL_BUILD_TYPE_ARCH}
 		${DEVIL_ROOT}/include
 )
 
@@ -39,7 +48,7 @@ FIND_PATH(IL_INCLUDE_DIR IL/il.h
 
 FIND_LIBRARY(IL_LIBRARIES
 	NAMES IL DEVIL
-	PATH_SUFFIXES lib64 lib lib32
+	PATH_SUFFIXES lib${IL_BUILD_TYPE_ARCH} lib lib32
 	DOC "The file that corresponds to the base il library."
 	HINTS
 		${DEVIL_ROOT}
@@ -49,7 +58,7 @@ FIND_LIBRARY(IL_LIBRARIES
 
 FIND_LIBRARY(ILUT_LIBRARIES
 	NAMES ILUT
-	PATH_SUFFIXES lib64 lib lib32
+	PATH_SUFFIXES lib${IL_BUILD_TYPE_ARCH} lib lib32
 	DOC "The file that corresponds to the il (system?) utility library."
 	HINTS
 		${DEVIL_ROOT}
@@ -59,7 +68,7 @@ FIND_LIBRARY(ILUT_LIBRARIES
 
 FIND_LIBRARY(ILU_LIBRARIES
 	NAMES ILU
-	PATH_SUFFIXES lib64 lib lib32
+	PATH_SUFFIXES lib${IL_BUILD_TYPE_ARCH} lib lib32
 	DOC "The file that corresponds to the il utility library."
 	HINTS
 		${DEVIL_ROOT}

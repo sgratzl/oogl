@@ -21,7 +21,16 @@
 # (To distributed this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+   # 64-bit project
+   set(GLUT_BUILD_TYPE_ARCH 64)
+else()
+   # 32-bit project
+   set(GLUT_BUILD_TYPE_ARCH 32)
+endif()
+
 IF (WIN32)
+
   FIND_PATH( GLUT_INCLUDE_DIR NAMES GL/glut.h
     HINTS
 		${GLUT_ROOT}
@@ -30,12 +39,14 @@ IF (WIN32)
     HINTS
 		${OPENGL_LIBRARY_DIR}
 		${GLUT_ROOT}/Release
+		${GLUT_ROOT}/lib${GLUT_BUILD_TYPE_ARCH}
 		${GLUT_ROOT}/lib
     )
   FIND_LIBRARY( GLUT_glut_LIBRARY_DEBUG NAMES freeglutD glutD glut32D freeglut glut glut32
     HINTS
 		${OPENGL_LIBRARY_DIR}
 		${GLUT_ROOT}/Debug
+		${GLUT_ROOT}/lib${GLUT_BUILD_TYPE_ARCH}
 		${GLUT_ROOT}/lib
     )
 ELSE (WIN32)

@@ -1,0 +1,19 @@
+= Readme =
+
+0. Install cmake
+
+sudo apt-get install cmake
+
+1. Install lib devil
+
+sudo apt-get install libdevil-dev
+
+2. generate and build
+
+mkdir build
+cd build
+cmake ../
+make
+
+notes: 
+Besides the compiled files also launcher script files: start....sh are generated, which start the named application in the current directory. Therefore you have to manually copy the start scripts in the right directory, e.g. using {{{cp startex1Introduction.sh ../exercises/ex1Introduction/}}}

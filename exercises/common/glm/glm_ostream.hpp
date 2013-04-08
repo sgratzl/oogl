@@ -9,7 +9,6 @@
 #define GLM_OSTREAM_HPP_
 
 #include <glm/core/type.hpp>
-#include <glm/gtx/matrix_selection.hpp>
 #include <ostream>
 #include <iomanip>
 

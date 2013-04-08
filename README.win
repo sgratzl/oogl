@@ -1,0 +1,6 @@
+= Readme =
+
+0. assumptions
+cmake and visual studio (2008, 2010 or 2012) installed
+
+in the simplest case just start configure.bat and select the your favorite startup project

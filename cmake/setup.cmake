@@ -34,15 +34,35 @@ foreach(makro ${makros})
 	include(${makro})
 endforeach()
 
+#specify 32 or 64 bit build
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+   # 64-bit project
+   message(STATUS "building 64-bit project")
+   set(PROJECT_BUILD_TYPE_32 OFF)
+   set(PROJECT_BUILD_TYPE_64 ON)
+   set(PROJECT_BUILD_TYPE_ARCH 64)
+else()
+   # 32-bit project
+   message(STATUS "building 32-bit project")
+   set(PROJECT_BUILD_TYPE_32 ON)
+   set(PROJECT_BUILD_TYPE_64 OFF)
+   set(PROJECT_BUILD_TYPE_ARCH 32)
+endif()
 
 #set generators
 if(WIN32 AND MSVC_IDE)
 	set(IDE_TYPE vs)
+	if (PROJECT_BUILD_TYPE_64)
+		set(IDE_BUILD_PLATFORM "x64")
+	else()
+		set(IDE_BUILD_PLATFORM "Win32")
+	endif()
 elseif(DEFINED CMAKE_ECLIPSE_EXECUTABLE)
 	set(IDE_TYPE cdt)
 else()
 	set(IDE_TYPE unknown)
 endif()
+
 
 #set output locations
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)

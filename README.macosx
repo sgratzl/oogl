@@ -1,0 +1,34 @@
+= Readme =
+
+0. assumptions: 
+target installation directory is /opt/local, otherwise things can be simplified
+cmake and xcode are already installed
+
+1. install libjpeg and libpng if you don't already have it
+
+2. install libdevil: 
+
+2.1. download from http://openil.sourceforge.net/download.php
+
+2.2. hack ilut.c
+from:  #include <malloc.h>
+to:    #include <sys/malloc.c>
+
+2.2. build using:
+#configure with custom target directory
+env CPPFLAGS="-I/opt/local/include" LDFLAGS="-L/opt/local/lib" ./configure --enable-ILU --enable-ILUT --prefix="/opt/local" --enable-static=no
+#build
+make
+#install build
+sudo make install
+
+2.3. using cmake normally and choose XCode as generator
+
+2.4. build normally
+
+2.5. adapt working directory
+in order to launch the selected scheme in the correct directory. go to
+-> Edit Scheme -> Options -> "Use Custom working directory" 
+and select the project directory where the current exercise is in
+
+
