@@ -12,7 +12,7 @@
 namespace oogl {
 
 Navigator::Navigator(glm::vec2 rotateFactor, float scaleFactor, glm::vec2 translateFactor) :
-	rotateFactor(rotateFactor), scaleFactor(scaleFactor), translateFactor(translateFactor), buttonState(0) {
+	 buttonState(0), rotateFactor(rotateFactor), scaleFactor(scaleFactor), translateFactor(translateFactor) {
 
 }
 

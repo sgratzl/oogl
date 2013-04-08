@@ -132,7 +132,7 @@ void FrameBufferObject::beginCommon() {
 void FrameBufferObject::begin(unsigned int target) {
 	beginCommon();
 
-	if(target < 0 || target >= textures.size()) {
+	if(target <= 0 || target >= textures.size()) {
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 	} else {

@@ -1,7 +1,9 @@
 #include <iostream>
 #include <GLee.h>
-#include <GL/gl.h>		// OpenGL header
-#include <GL/freeglut.h>	// GLUT header
+#include <oogl/glutIncludes.h>
+#ifndef __APPLE__
+# include <GL/freeglut.h>	// GLUT header
+#endif
 
 #include <utils/loglevels.h>
 #define LOG_LEVEL LOG_LEVEL_DEBUG
@@ -122,7 +124,9 @@ int setupGLUT(int argc, char** argv) {
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMotion);
+#ifndef __APPLE__
 	glutMouseWheelFunc(mouseWheel);
+#endif
 
 	return windowId;
 }

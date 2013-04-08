@@ -6,9 +6,7 @@
  */
 
 #include <iostream>
-#include <GLee.h>
-#include <GL/gl.h>		// OpenGL header
-#include <GL/glut.h>	// GLUT header
+#include <oogl/glutIncludes.h>
 
 #include <utils/loglevels.h>
 #define LOG_LEVEL LOG_LEVEL_DEBUG

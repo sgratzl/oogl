@@ -65,7 +65,7 @@ Image* Image::load(const std::string& fileName) {
 	return new Image(fileName, img);
 }
 
-Image::Image(const std::string& fileName, ILuint img) : img(img), fileName(fileName) {
+Image::Image(const std::string& fileName, ILuint img) : fileName(fileName), img(img) {
 }
 
 Image::~Image() {

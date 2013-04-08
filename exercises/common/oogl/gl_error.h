@@ -2,7 +2,11 @@
 #define GL_ERROR_H
 
 #include <oogl/glIncludes.h>
-#include <GL/glu.h>
+#if defined(__APPLE__) || defined(__APPLE_CC__)
+# include <OpenGL/glu.h>
+#else
+# include <GL/glu.h>
+#endif
 #include <utils/log.h>
 
 #define LOG_GL_ERRORS() \

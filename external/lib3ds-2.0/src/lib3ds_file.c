@@ -1378,6 +1378,8 @@ file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
                 lib3ds_vector_max(bmax, v);
             }
             break;
+        default:
+            break;
     }
     {
         Lib3dsNode *p = node->childs;

@@ -303,9 +303,7 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 	float (*normalL)[3] = (float(*)[3]) malloc(3 * 3 * sizeof(float) * mesh->nfaces);
 	lib3ds_mesh_calculate_vertex_normals(mesh, normalL);
 
-	oogl::Texture* texture = NULL;
-
-	if(options & RENDER_NO_MATERIALS) {
+    if(options & RENDER_NO_MATERIALS) {
 		glBegin(GL_TRIANGLES);
 		{
 			for(int p = 0; p < mesh->nfaces; ++p) {
