@@ -1,3 +1,9 @@
+/*
+ * timer.cpp
+ *
+ *  Created on: 21.05.2011
+ *      Author: sam
+ */
 #include <oogl/glIncludes.h>
 #include <oogl/timer.h>
 

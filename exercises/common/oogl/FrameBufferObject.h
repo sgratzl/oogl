@@ -5,9 +5,7 @@
  *      Author: sam
  */
 
-#ifndef FRAMEBUFFEROBJECT_H_
-#define FRAMEBUFFEROBJECT_H_
-
+#pragma once
 
 #include <oogl/glIncludes.h>
 
@@ -49,4 +47,3 @@ private:
 
 }
 
-#endif /* FRAMEBUFFEROBJECT_H_ */

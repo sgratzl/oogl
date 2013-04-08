@@ -1,5 +1,10 @@
-	#ifndef UTIL_TIMER_H__
-#define UTIL_TIMER_H__
+/*
+ * timer.h
+ *
+ *  Created on: 10.07.2010
+ *      Author: sam
+ */
+#pragma once
 
 #include <string>
 struct timer_;
@@ -19,4 +24,4 @@ private:
 };
 }
 
-#endif
+#pragma once

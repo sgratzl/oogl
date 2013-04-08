@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef DISPLAYLIST_H_
-#define DISPLAYLIST_H_
+#pragma once
 
 #include <oogl/glIncludes.h>
 
@@ -28,4 +27,3 @@ private:
 
 }
 
-#endif /* DISPLAYLIST_H_ */

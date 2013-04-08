@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef TEXTURE_H_
-#define TEXTURE_H_
+#pragma once
 
 #include <utils/log.h>
 
@@ -15,7 +14,6 @@
 
 #include <oogl/glIncludes.h>
 #include <glm/glm.hpp>
-
 
 namespace oogl {
 
@@ -56,4 +54,4 @@ private:
 Texture* loadTexture(const std::string& fileName);
 
 }
-#endif /* TEXTURE_H_ */
+

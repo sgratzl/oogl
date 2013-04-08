@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef GLSLPROGRAM_H_
-#define GLSLPROGRAM_H_
+#pragma once
 
 #include <oogl/glIncludes.h>
 #include <oogl/GLSLShader.h>
@@ -117,5 +116,3 @@ private:
 };
 
 }
-
-#endif /* GLSLPROGRAM_H_ */

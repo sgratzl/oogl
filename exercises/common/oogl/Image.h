@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef IMAGE_H_
-#define IMAGE_H_
+#pragma once
 
 #include <string>
 #include <oogl/glIncludes.h>
@@ -51,4 +50,3 @@ Image* loadImage(const std::string &fileName);
 
 }
 
-#endif /* IMAGE_H_ */

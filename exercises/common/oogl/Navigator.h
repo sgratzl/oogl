@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef NAVIGATOR_H_
-#define NAVIGATOR_H_
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -41,4 +40,3 @@ private:
 
 }
 
-#endif /* NAVIGATOR_H_ */

@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef GLSLSHADER_H_
-#define GLSLSHADER_H_
+#pragma once
 
 #include <oogl/glIncludes.h>
 
@@ -47,5 +46,3 @@ private:
 GLuint loadShader(const std::string& filename, GLenum type);
 
 }
-
-#endif /* GLSLSHADER_H_ */

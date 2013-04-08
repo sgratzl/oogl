@@ -1,3 +1,9 @@
+/*
+ * timer.cpp
+ *
+ *  Created on: 10.07.2010
+ *      Author: sam
+ */
 #ifdef WIN32
 # include <windows.h>
 # include <mmsystem.h>

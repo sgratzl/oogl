@@ -1,5 +1,10 @@
-#ifndef GLTIMER_H_
-#define GLTIMER_H_
+/*
+ * timer.h
+ *
+ *  Created on: 21.05.2011
+ *      Author: sam
+ */
+#pragma once
 
 #include <string>
 #include <utils/timer.h>
@@ -16,4 +21,3 @@ protected:
 
 }
 
-#endif

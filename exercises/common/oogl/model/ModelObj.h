@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef MODELOBJ_H_
-#define MODELOBJ_H_
+#pragma once
 
 #include <glm/glm.h>
 
@@ -35,4 +34,3 @@ private:
 
 }}
 
-#endif /* MODELOBJ_H_ */

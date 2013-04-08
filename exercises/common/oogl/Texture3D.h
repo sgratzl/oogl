@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef TEXTURE3D_H_
-#define TEXTURE3D_H_
+#pragma once
 
 #include <oogl/Texture.h>
 #include <oogl/Image.h>
@@ -45,5 +44,3 @@ private:
 };
 
 }
-
-#endif /* TEXTURE3D_H_ */

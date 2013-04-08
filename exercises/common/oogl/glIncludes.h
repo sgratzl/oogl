@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef GLINCLUDES_H_
-#define GLINCLUDES_H_
+#pragma once
 
 #include <GLee.h>
 #ifdef WIN32
@@ -17,4 +16,3 @@
 # include <GL/glu.h>
 #endif
 
-#endif /* GLINCLUDES_H_ */

@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef GLM_OSTREAM_HPP_
-#define GLM_OSTREAM_HPP_
+#pragma once
 
 #include <glm/core/type.hpp>
 #include <ostream>
@@ -80,5 +79,3 @@ std::ostream &operator<<(std::ostream &ostr, const glm::detail::tmat4x4<T> &v) {
 }
 
 #undef GLM_FORMATTING
-
-#endif /* GLM_OSTREAM_HPP_ */

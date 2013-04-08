@@ -1,5 +1,10 @@
-#ifndef GL_ERROR_H
-#define GL_ERROR_H
+/*
+ * gl_error.h
+ *
+ *  Created on: 10.02.2011
+ *      Author: sam
+ */
+#pragma once
 
 #include <oogl/glIncludes.h>
 #if defined(__APPLE__) || defined(__APPLE_CC__)
@@ -21,4 +26,3 @@ namespace oogl {
 	void dumpGLInfos();
 }
 
-#endif

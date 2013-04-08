@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef TEXTURE2D_H_
-#define TEXTURE2D_H_
+#pragma once
 
 #include <oogl/Texture.h>
 #include <oogl/Image.h>
@@ -44,4 +43,3 @@ private:
 
 }
 
-#endif /* TEXTURE2D_H_ */

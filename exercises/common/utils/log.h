@@ -5,8 +5,7 @@
  *      Author: sam
  */
 
-#ifndef LOG_H_
-#define LOG_H_
+#pragma once
 
 #include <iostream>
 
@@ -49,7 +48,4 @@
 #else
 # define LOG_ERROR if(false) std::cout
 # define LOG_IS_ERROR_ENABLED false
-#endif
-
-
 #endif
