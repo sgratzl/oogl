@@ -5,7 +5,7 @@
 	ShowAllFiles="false">
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			Name="Debug|@IDE_BUILD_PLATFORM@"
 			>
 			<DebugSettings
 				Command="$(TargetPath)"
@@ -33,7 +33,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Release|@IDE_BUILD_PLATFORM@"
 			>
 			<DebugSettings
 				Command="$(TargetPath)"
@@ -61,7 +61,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="RelWithDebInfo|Win32"
+			Name="RelWithDebInfo|@IDE_BUILD_PLATFORM@"
 			>
 			<DebugSettings
 				Command="$(TargetPath)"
@@ -89,7 +89,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="MinSizeRel|Win32"
+			Name="MinSizeRel|@IDE_BUILD_PLATFORM@"
 			>
 			<DebugSettings
 				Command="$(TargetPath)"

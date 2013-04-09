@@ -50,10 +50,10 @@ function(add_launcher)
 		if (MSVC AND (MSVC10 OR (MSVC_VERSION EQUAL 1600)))
 			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2010.vcxproj.user.in
 				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcxproj.user @ONLY)
-		else (MSVC AND (MSVC11 OR (MSVC_VERSION EQUAL 1700)))
+		elseif (MSVC AND (MSVC11 OR (MSVC_VERSION EQUAL 1700)))
 			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2012.vcxproj.user.in
 				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcxproj.user @ONLY)
-		else (MSVC AND (MSVC_VERSION EQUAL 1500))
+		elseif (MSVC AND (MSVC90 OR (MSVC_VERSION EQUAL 1500)))
 			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2008.vcproj.user.in
 				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcproj.user @ONLY)
 		endif()
