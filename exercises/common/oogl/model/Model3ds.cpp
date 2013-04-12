@@ -323,6 +323,8 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 		bool began = false;
 		oogl::Texture* actTexture = NULL;
 
+		glEnable(GL_TEXTURE_2D);
+
 		for(int p = 0; p < mesh->nfaces; ++p) {
 			Lib3dsFace *face = &(mesh->faces[p]);
 			if(face->material != actMaterialIndex) { //material/texture change
