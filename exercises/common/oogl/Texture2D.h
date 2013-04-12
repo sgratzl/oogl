@@ -17,6 +17,7 @@ public:
 	static Texture2D* load(Image *image);
 	static Texture2D* createDepth(const glm::uvec2& dim, const GLint format);
 	static Texture2D* createColor(const glm::uvec2& dim, const GLint format);
+	static Texture2D* createContainer(const GLint format);
 
 	virtual ~Texture2D();
 
@@ -31,6 +32,8 @@ public:
 	glm::uvec2 getDimensions() {
 		return dim;
 	}
+
+	void setSize(const glm::uint& width, const glm::uint& height);
 
 	void render();
 

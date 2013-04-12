@@ -43,6 +43,27 @@ Texture2D* Texture2D::createColor(const glm::uvec2& dim, const GLint format) {
 	return tex;
 }
 
+Texture2D* Texture2D::createContainer(const GLint format) {
+	LOG_DEBUG << "create empty container" << std::endl;
+	
+	GLuint textureId;
+	glGenTextures(1, &textureId);
+
+	Texture2D* tex = new Texture2D("wrapped",glm::uvec2(1,1), textureId, format);
+	tex->bind();
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	LOG_GL_ERRORS();
+
+	tex->unbind();
+	return tex;
+}
+
 Texture2D* Texture2D::createDepth(const glm::uvec2& dim, const GLint format) {
 	LOG_DEBUG << "create depth texture: " << dim << std::endl;
 	GLuint textureId;
@@ -110,6 +131,11 @@ Texture2D::Texture2D(const std::string& name, const glm::uvec2& dim, const GLuin
 
 Texture2D::~Texture2D() {
 
+}
+
+void Texture2D::setSize(const glm::uint& width, const glm::uint& height) {
+	dim.x = width;
+	dim.y = height;
 }
 
 void Texture2D::render() {
