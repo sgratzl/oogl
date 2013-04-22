@@ -1,5 +1,8 @@
 
+#build folder
 /.project
 /build
 
+#start launcher
 start*.bat
+start*.sh
