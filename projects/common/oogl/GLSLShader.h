@@ -22,6 +22,7 @@ public:
 	};
 
 	static GLSLShader* create(const ShaderType shaderType, const std::string& filename);
+	static GLSLShader* createFromSource(const ShaderType shaderType, const std::string& code);
 	static GLuint load(const ShaderType shaderType, const std::string& filename);
 
 	virtual ~GLSLShader();
@@ -37,7 +38,7 @@ private:
 	GLuint shader;
 	friend class GLSLProgram;
 
-	GLSLShader(const ShaderType shaderType, const std::string& filename, bool cleanUpOnFree = true);
+	GLSLShader(const ShaderType shaderType, const std::string& filename, bool isCode, bool cleanUpOnFree = true);
 
 	void loadFromFile(const std::string& filename);
 	void load(const std::string& code);

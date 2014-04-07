@@ -102,6 +102,7 @@ public:
 	GLSLAttrib operator[](const std::string& arg);
 
 	static GLSLProgram* create(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
+	static GLSLProgram* createFromSource(const std::string& vertexShader, const std::string& fragmentShader);
 	static GLSLProgram* create(const std::string& vertexShaderFile, const std::string& geometryShaderFile, const std::string& fragmentShaderFile);
 
 private:

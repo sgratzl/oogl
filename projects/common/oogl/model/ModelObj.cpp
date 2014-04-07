@@ -10,7 +10,7 @@
 
 #include <stdexcept>
 
-#include <glm/glm_ostream.hpp>
+#include <glm/gtx/io.hpp>
 
 #include <utils/log.h>
 

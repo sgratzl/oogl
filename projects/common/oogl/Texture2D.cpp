@@ -16,7 +16,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <glm/glm_ostream.hpp>
+#include <glm/gtx/io.hpp>
 
 namespace oogl {
 

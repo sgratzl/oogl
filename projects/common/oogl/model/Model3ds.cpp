@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #include <stdexcept>
 #include <algorithm>
 
-#include <glm/glm_ostream.hpp>
+#include <glm/gtx/io.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 
@@ -260,6 +260,7 @@ oogl::Texture* Model3ds::applyMaterial(Lib3dsMaterial *material, RenderOptions o
 			LOG_DEBUG << "reuse texture " << tex->user_id-1 << std::endl;
 			texture = textures.at((tex->user_id-1));
 		}
+		glEnable(GL_TEXTURE_2D);
 		return texture;
 	}
 	return NULL;
@@ -322,8 +323,6 @@ void Model3ds::renderMeshImpl(Lib3dsMeshInstanceNode *node, Lib3dsMesh *mesh, Re
 		int actMaterialIndex = -1;
 		bool began = false;
 		oogl::Texture* actTexture = NULL;
-
-		glEnable(GL_TEXTURE_2D);
 
 		for(int p = 0; p < mesh->nfaces; ++p) {
 			Lib3dsFace *face = &(mesh->faces[p]);

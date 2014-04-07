@@ -13,11 +13,20 @@ void dumpGLInfos() {
 	if(!LOG_IS_INFO_ENABLED)
 		return;
 
-	LOG_INFO << std::endl
+	if (glGetString(GL_SHADING_LANGUAGE_VERSION)) {
+		LOG_INFO << std::endl
 		<< "Vendor: " << glGetString(GL_VENDOR) << std::endl
 		<< "Renderer: " << glGetString(GL_RENDERER) << std::endl
 		<< "Version: " << glGetString(GL_VERSION) << std::endl
 		<< "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+	} else {
+		LOG_INFO << std::endl
+		<< "Vendor: " << glGetString(GL_VENDOR) << std::endl
+		<< "Renderer: " << glGetString(GL_RENDERER) << std::endl
+		<< "Version: " << glGetString(GL_VERSION) << std::endl
+		<< "GLSL Version: " << "UNKNOWN" << std::endl;
+	}
+	
 	LOG_DEBUG << std::endl
 		<< "Extensions: " << glGetString(GL_EXTENSIONS) << std::endl;
 }

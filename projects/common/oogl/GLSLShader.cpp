@@ -16,21 +16,29 @@
 namespace oogl {
 
 GLSLShader* GLSLShader::create(const ShaderType shaderType, const std::string& filename) {
-	return new GLSLShader(shaderType, filename);
+	return new GLSLShader(shaderType, filename, false);
+}
+
+GLSLShader* GLSLShader::createFromSource(const ShaderType shaderType, const std::string& code) {
+	return new GLSLShader(shaderType, code, true);
 }
 
 GLuint GLSLShader::load(const ShaderType shaderType, const std::string& filename) {
-	GLSLShader s(shaderType, filename, false);
+	GLSLShader s(shaderType, filename, false, false);
 	return s.shader;
 }
 
-GLSLShader::GLSLShader(const ShaderType type, const std::string& filename, bool cleanUpOnFree): type(type), filename(filename), cleanUpOnFree(cleanUpOnFree) {
+GLSLShader::GLSLShader(const ShaderType type, const std::string& filename, bool isCode, bool cleanUpOnFree): type(type), cleanUpOnFree(cleanUpOnFree) {
+	this->filename = isCode ? "<custom>" : filename;
 	shader = glCreateShader(type);
 	if(!shader) {
 		LOG_ERROR << "failed creating shader of type: " << toString(type) << std::endl;
 		throw std::runtime_error("failed creating shader");
 	}
-	loadFromFile(filename);
+	if (isCode)
+		load(filename);
+	else
+		loadFromFile(filename);
 }
 
 GLSLShader::~GLSLShader() {

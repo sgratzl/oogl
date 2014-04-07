@@ -42,14 +42,14 @@ void Navigator::mouseMotion(int x, int y) {
 	lastMouse = mouse;
 
 	if (buttonState & LEFT_DOWN) {
-		matrix = glm::rotate(dmouse.x * rotateFactor.x, 0.0f, 1.0f, 0.0f) * glm::rotate(dmouse.y * rotateFactor.y, 1.0f, 0.0f, 0.0f) * matrix;
+		matrix = glm::rotate(dmouse.x * rotateFactor.x, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(dmouse.y * rotateFactor.y, glm::vec3(1.0f, 0.0f, 0.0f)) * matrix;
 	}
 	if (buttonState & RIGHT_DOWN) {
 		float m = 1 + (dmouse.x + dmouse.y) * scaleFactor;
-		matrix = glm::scale(m, m, m) * matrix;
+		matrix = glm::scale(glm::vec3(m, m, m)) * matrix;
 	}
 	if (buttonState & MIDDLE_DOWN) {
-		matrix = glm::translate(dmouse.x * translateFactor.x, dmouse.y * translateFactor.y, 0.0f) * matrix;
+		matrix = glm::translate(glm::vec3(dmouse.x * translateFactor.x, dmouse.y * translateFactor.y, 0.0f)) * matrix;
 	}
 
 }

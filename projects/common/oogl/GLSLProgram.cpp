@@ -92,6 +92,18 @@ GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std:
 	return new GLSLProgram(shaders);
 }
 
+
+GLSLProgram* GLSLProgram::createFromSource(const std::string& vertexShader, const std::string& fragmentShader) {
+	GLSLShader* vertex = GLSLShader::createFromSource(GLSLShader::VERTEX, vertexShader);
+	GLSLShader* fragment = GLSLShader::createFromSource(GLSLShader::FRAGMENT, fragmentShader);
+
+	GLSLShaders shaders;
+	shaders.push_back(vertex);
+	shaders.push_back(fragment);
+
+	return new GLSLProgram(shaders);
+}
+
 GLSLProgram* GLSLProgram::create(const std::string& vertexShaderFile, const std::string& geometryShaderFile, const std::string& fragmentShaderFile) {
 	GLSLShader* vertex = GLSLShader::create(GLSLShader::VERTEX, vertexShaderFile);
 	GLSLShader* fragment = GLSLShader::create(GLSLShader::FRAGMENT, fragmentShaderFile);
