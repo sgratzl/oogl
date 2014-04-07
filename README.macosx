@@ -1,32 +1,22 @@
 = Readme =
 
-0. assumptions: 
-target installation directory is /opt/local, otherwise things can be simplified
+0. preconditons: 
 cmake and xcode are already installed
 
+install brew:
+ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+
 1. install libjpeg and libpng if you don't already have it
+brew link libpng jpeg
 
-2. install libdevil: 
+2. install libdevil:
+brew install devil --use-llvm 
 
-2.1. download from http://openil.sourceforge.net/download.php
+3 using cmake normally and choose XCode as generator
 
-2.2. hack ilut.c
-from:  #include <malloc.h>
-to:    #include <sys/malloc.c>
+4. build normally
 
-2.2. build using:
-#configure with custom target directory
-env CPPFLAGS="-I/opt/local/include" LDFLAGS="-L/opt/local/lib" ./configure --enable-ILU --enable-ILUT --prefix="/opt/local" --enable-static=no
-#build
-make
-#install build
-sudo make install
-
-2.3. using cmake normally and choose XCode as generator
-
-2.4. build normally
-
-2.5. adapt working directory
+5. adapt working directory
 in order to launch the selected scheme in the correct directory. go to
 -> Edit Scheme -> Options -> "Use Custom working directory" 
 and select the project directory where the current exercise is in

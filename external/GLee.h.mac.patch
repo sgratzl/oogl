@@ -1,0 +1,32 @@
+Index: GLee.h
+===================================================================
+--- GLee.h	(revision 645)
++++ GLee.h	(working copy)
+@@ -761,14 +761,20 @@
+ 	typedef ptrdiff_t GLsizeiptrARB;
+ #endif
+ 
+-#ifndef GL_ARB_shader_objects
+-	typedef int GLhandleARB;
+-	typedef char GLcharARB;
+-#endif
++//sam HACK
++#if !defined(__APPLE__) && !defined(__APPLE_CC__)
++//apple added these types by default
++//https://developer.apple.com/library/Mac/releasenotes/General/MacOSXLionAPIDiffs/OpenGL.html
++	#ifndef GL_ARB_shader_objects
++		typedef int GLhandleARB;
++		typedef char GLcharARB;
++	#endif
+ 
+-#ifndef GL_EXT_timer_query
+-	typedef signed long long GLint64EXT;
+-	typedef unsigned long long GLuint64EXT;
++	#ifndef GL_EXT_timer_query
++		typedef signed long long GLint64EXT;
++		typedef unsigned long long GLuint64EXT;
++	#endif
++
+ #endif
+ 
+ /* Platform-specific */

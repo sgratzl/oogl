@@ -47,15 +47,18 @@ function(add_launcher)
 		string(REPLACE "/" "\\" CMAKE_FIXED_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 		configure_file("${LAUNCHER_FILE}" ${LAUNCHER_RESULT_FILE} IMMEDIATE)
 		#generate a .user file to set the working directory
+		#message(AUTHOR_WARNING "MSVC_VERSION ${MSVC_VERSION}")
 		if (MSVC AND (MSVC10 OR (MSVC_VERSION EQUAL 1600)))
 			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2010.vcxproj.user.in
 				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcxproj.user @ONLY)
-		elseif (MSVC AND (MSVC11 OR (MSVC_VERSION EQUAL 1700)))
+		elseif (MSVC AND (MSVC11 OR MSVC12 OR (MSVC_VERSION EQUAL 1700) OR (MSVC_VERSION GREATER 1700)))
 			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2012.vcxproj.user.in
 				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcxproj.user @ONLY)
 		elseif (MSVC AND (MSVC90 OR (MSVC_VERSION EQUAL 1500)))
 			configure_file(${CMAKE_SOURCE_DIR}/cmake/vs2008.vcproj.user.in
 				${CMAKE_CURRENT_BINARY_DIR}/${CURRENT_NAME}.vcproj.user @ONLY)
+		else() 
+			message(AUTHOR_WARNING "unknown visual studio version: ${MSVC_VERSION} can't generate project helper")
 		endif()
 	elseif(UNIX)
 		string(REPLACE ";" ":" CURRENT_FIXED_BIN_DIRS "${CURRENT_BIN_DIRS}")
